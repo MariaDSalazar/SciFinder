@@ -184,6 +184,24 @@
   color: var(--color-text);
 }
 
+/* Botón "Ver detalles": alineado a la derecha de la tarjeta. */
+.paper-card__details {
+  margin-left: auto;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: #eef4ff;
+  border: 1px solid #d8e4fd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.paper-card__details:hover {
+  background: #dce9ff;
+}
+
 /* ── Mensajes de estado ─────────────────────────── */
 .status-message {
   text-align: center;

@@ -45,6 +45,13 @@ export function PaperCard({ paper, onSelect }) {
             🔗 Ver publicación
           </a>
         )}
+        <button
+          className="paper-card__details"
+          type="button"
+          onClick={() => onSelect(paper.id)}
+        >
+          Ver detalles
+        </button>
       </footer>
     </article>
   );
