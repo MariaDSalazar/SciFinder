@@ -19,5 +19,6 @@ export function toPaperFromS2(s2Paper) {
     pdfSource: s2Paper.openAccessPdf ? "Semantic Scholar (OA)" : null,
     landingUrl: doi ? `https://doi.org/${doi}` : null,
     engine: "Semantic Scholar",
+    hasDetail: true, // tiene vista de detalle enriquecida (por DOI)
   };
 }

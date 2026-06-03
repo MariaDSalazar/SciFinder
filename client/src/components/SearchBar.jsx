@@ -11,6 +11,7 @@ const ENGINE_OPTIONS = [
   { value: "semanticscholar", label: "Semantic Scholar" },
   { value: "crossref", label: "Crossref" },
   { value: "europepmc", label: "Europe PMC" },
+  { value: "eric", label: "ERIC (educación)" },
   { value: "all", label: "Todos los motores" },
 ];
 

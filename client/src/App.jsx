@@ -97,6 +97,7 @@ const ENGINE_LABELS = {
   semanticScholar: "Semantic Scholar",
   crossref: "Crossref",
   europePmc: "Europe PMC",
+  eric: "ERIC",
 };
 
 // " (OpenAlex: 1.200 · Crossref: 800 · Semantic Scholar: sin respuesta)"

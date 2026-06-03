@@ -9,13 +9,17 @@ export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
     <article className="paper-card">
       <header className="paper-card__header">
         <h3 className="paper-card__title">
-          <button
-            className="paper-card__title-button"
-            type="button"
-            onClick={() => onSelect(paper.id)}
-          >
-            {paper.title}
-          </button>
+          {paper.hasDetail ? (
+            <button
+              className="paper-card__title-button"
+              type="button"
+              onClick={() => onSelect(paper.id)}
+            >
+              {paper.title}
+            </button>
+          ) : (
+            paper.title
+          )}
         </h3>
         {paper.isOpenAccess && (
           <span className="paper-card__badge" title="Acceso abierto">
@@ -61,13 +65,25 @@ export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
             🔗 Ver publicación
           </a>
         )}
-        <button
-          className="paper-card__details"
-          type="button"
-          onClick={() => onSelect(paper.id)}
-        >
-          Ver detalles
-        </button>
+        {paper.hasDetail ? (
+          <button
+            className="paper-card__details"
+            type="button"
+            onClick={() => onSelect(paper.id)}
+          >
+            Ver detalles
+          </button>
+        ) : (
+          <a
+            className="paper-card__details"
+            href={paper.landingUrl}
+            target="_blank"
+            rel="noreferrer"
+            title="Este motor no tiene vista de detalle; abre la ficha oficial"
+          >
+            Ver ficha ↗
+          </a>
+        )}
       </footer>
     </article>
   );

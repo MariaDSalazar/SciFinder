@@ -34,5 +34,8 @@ export function toPaperFromRecord(record) {
     abstract: record.abstract,
     topic: record.topic,
     savedAt: record.savedAt,
+    // Solo los ids de OpenAlex (W...) o por DOI tienen detalle enriquecido;
+    // los de ERIC ("eric:...") enlazan a su ficha oficial.
+    hasDetail: !record.id.startsWith("eric:"),
   };
 }

@@ -21,6 +21,7 @@ export function toPaper(work) {
     pdfSource: work.best_oa_location?.source?.display_name ?? null,
     landingUrl: work.doi ?? work.id,
     engine: "OpenAlex",
+    hasDetail: true, // tiene vista de detalle enriquecida (por id de OpenAlex)
   };
 }
 

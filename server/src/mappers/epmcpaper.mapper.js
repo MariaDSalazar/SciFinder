@@ -18,6 +18,7 @@ export function toPaperFromEuropePmc(result) {
     pdfSource: extractPdfUrl(result) ? "Europe PMC" : null,
     landingUrl: doi ? `https://doi.org/${doi}` : null,
     engine: "Europe PMC",
+    hasDetail: true, // tiene vista de detalle enriquecida (por DOI)
   };
 }
 

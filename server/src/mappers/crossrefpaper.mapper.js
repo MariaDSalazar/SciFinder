@@ -20,6 +20,7 @@ export function toPaperFromCrossref(item) {
     pdfSource: null,
     landingUrl: doi ? `https://doi.org/${doi}` : null,
     engine: "Crossref",
+    hasDetail: true, // tiene vista de detalle enriquecida (por DOI)
   };
 }
 

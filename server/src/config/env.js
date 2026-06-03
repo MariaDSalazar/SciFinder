@@ -22,4 +22,7 @@ export const config = {
   europePmc: {
     baseUrl: "https://www.ebi.ac.uk/europepmc/webservices/rest",
   },
+  eric: {
+    baseUrl: "https://api.ies.ed.gov/eric",
+  },
 };

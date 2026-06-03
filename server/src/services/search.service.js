@@ -2,6 +2,7 @@ import * as openAlex from "./openalex.service.js";
 import { searchPapersS2 } from "./semanticscholar.service.js";
 import { searchPapersCrossref } from "./crossref.service.js";
 import { searchPapersEuropePmc } from "./europepmc.service.js";
+import { searchPapersEric } from "./eric.service.js";
 
 // Registro de motores SECUNDARIOS. Agregar un motor nuevo = una entrada aquí
 // (más su servicio y mapper). "key" es el nombre que ve el frontend en totals.
@@ -9,6 +10,7 @@ const SECONDARY_ENGINES = {
   semanticscholar: { search: searchPapersS2, key: "semanticScholar" },
   crossref: { search: searchPapersCrossref, key: "crossref" },
   europepmc: { search: searchPapersEuropePmc, key: "europePmc" },
+  eric: { search: searchPapersEric, key: "eric" },
 };
 
 // Orquestador de motores de búsqueda. Según "engine":
