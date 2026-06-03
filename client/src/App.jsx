@@ -180,23 +180,30 @@ function renderResults({
       <p className="app__count">
         {total.toLocaleString("es")} resultados encontrados{formatTotalsBreakdown(totals)}
       </p>
-      <ResultsCharts byYear={byYear} results={results} onYearClick={onYearClick} />
-      <PaperList
-        papers={results}
-        onSelectPaper={onSelectPaper}
-        isFavorite={isFavorite}
-        onToggleFavorite={onToggleFavorite}
-      />
-      {hasMore && (
-        <button
-          className="app__load-more"
-          type="button"
-          onClick={onLoadMore}
-          disabled={loadingMore}
-        >
-          {loadingMore ? "Cargando..." : "⬇️ Cargar más resultados"}
-        </button>
-      )}
+      {/* Dos columnas: lista de resultados a la izquierda, gráficas a la derecha. */}
+      <div className="results-layout">
+        <div className="results-layout__list">
+          <PaperList
+            papers={results}
+            onSelectPaper={onSelectPaper}
+            isFavorite={isFavorite}
+            onToggleFavorite={onToggleFavorite}
+          />
+          {hasMore && (
+            <button
+              className="app__load-more"
+              type="button"
+              onClick={onLoadMore}
+              disabled={loadingMore}
+            >
+              {loadingMore ? "Cargando..." : "⬇️ Cargar más resultados"}
+            </button>
+          )}
+        </div>
+        <aside className="results-layout__charts">
+          <ResultsCharts byYear={byYear} results={results} onYearClick={onYearClick} />
+        </aside>
+      </div>
     </>
   );
 }

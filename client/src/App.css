@@ -1,6 +1,6 @@
 /* ── Layout principal ───────────────────────────── */
 .app {
-  max-width: 860px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem 4rem;
 }
@@ -279,12 +279,37 @@
   background: #dce9ff;
 }
 
+/* ── Layout de resultados: lista izquierda + gráficas derecha ── */
+.results-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* Las gráficas acompañan el scroll (quedan "pegadas" arriba). */
+.results-layout__charts {
+  position: sticky;
+  top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .results-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* En pantallas chicas las gráficas pasan arriba de la lista. */
+  .results-layout__charts {
+    position: static;
+    order: -1;
+  }
+}
+
 /* ── Gráficas de resultados ─────────────────────── */
 .charts {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr; /* apiladas en la columna derecha */
   gap: 1rem;
-  margin-bottom: 1.25rem;
 }
 
 .charts__panel {
@@ -304,12 +329,6 @@
   margin: 0.4rem 0 0;
   font-size: 0.75rem;
   color: var(--color-muted);
-}
-
-@media (max-width: 700px) {
-  .charts {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ── Grupos de favoritos por tema ───────────────── */
