@@ -1,4 +1,5 @@
 import { ApiError } from "../lib/ApiError.js";
+import { cached, TTL } from "../lib/cache.js";
 import { searchPapers } from "../services/search.service.js";
 import { recordSearch } from "../services/history.service.js";
 
@@ -40,12 +41,20 @@ function parseYear(value) {
 export async function handleSearch(req, res, next) {
   try {
     const params = parseSearchParams(req.query);
-    const data = await searchPapers(params);
+
+    // Misma búsqueda (mismos parámetros) dentro de 5 min → sale de la caché
+    // sin tocar las APIs externas.
+    const { value: data, hit } = await cached(
+      `search:${JSON.stringify(params)}`,
+      TTL.search,
+      () => searchPapers(params),
+    );
 
     // El historial se guarda "en segundo plano": si fallara,
     // no debe afectar la respuesta de la búsqueda.
     recordSearch({ query: params.query, total: data.total }).catch(() => {});
 
+    res.set("X-Cache", hit ? "HIT" : "MISS");
     res.json(data);
   } catch (error) {
     next(error);

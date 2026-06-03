@@ -1,4 +1,5 @@
 import { ApiError } from "../lib/ApiError.js";
+import { cached, TTL } from "../lib/cache.js";
 import { isPaperId } from "../lib/validation.js";
 import { getPaperById } from "../services/openalex.service.js";
 import { getEnrichment } from "../services/semanticscholar.service.js";
@@ -14,27 +15,34 @@ export async function handleGetPaper(req, res, next) {
       throw new ApiError(400, "El id del paper no es válido (se espera 'W...' o 'doi:10...')");
     }
 
-    const paper = await getPaperById(id);
+    // El mismo paper dentro de 30 min → sale de la caché (con sus
+    // enriquecimientos incluidos) sin tocar las 3 APIs externas.
+    const { value: payload, hit } = await cached(`paper:${id}`, TTL.detail, async () => {
+      const paper = await getPaperById(id);
 
-    // Los dos enriquecimientos van en paralelo (no se suman las esperas)
-    // y son opcionales: si alguno falla, sus campos van en null.
-    const [enrichment, openCitations] = await Promise.all([
-      getEnrichment(paper.doi),
-      getOpenCitationsStats(paper.doi),
-    ]);
+      // Los dos enriquecimientos van en paralelo (no se suman las esperas)
+      // y son opcionales: si alguno falla, sus campos van en null.
+      const [enrichment, openCitations] = await Promise.all([
+        getEnrichment(paper.doi),
+        getOpenCitationsStats(paper.doi),
+      ]);
 
-    res.json({
-      ...paper,
-      tldr: enrichment?.tldr ?? null,
-      influentialCitations: enrichment?.influentialCitations ?? null,
-      openCitations,
-      // Transparencia: qué fuente de datos respondió para este paper.
-      sources: {
-        openAlex: true,
-        semanticScholar: enrichment !== null,
-        openCitations: openCitations !== null,
-      },
+      return {
+        ...paper,
+        tldr: enrichment?.tldr ?? null,
+        influentialCitations: enrichment?.influentialCitations ?? null,
+        openCitations,
+        // Transparencia: qué fuente de datos respondió para este paper.
+        sources: {
+          openAlex: true,
+          semanticScholar: enrichment !== null,
+          openCitations: openCitations !== null,
+        },
+      };
     });
+
+    res.set("X-Cache", hit ? "HIT" : "MISS");
+    res.json(payload);
   } catch (error) {
     next(error);
   }

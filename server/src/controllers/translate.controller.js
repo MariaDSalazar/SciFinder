@@ -1,4 +1,5 @@
 import { ApiError } from "../lib/ApiError.js";
+import { cached, TTL } from "../lib/cache.js";
 import { translateText } from "../services/translate.service.js";
 
 const SUPPORTED_LANGS = ["es", "en"];
@@ -20,7 +21,15 @@ export async function handleTranslate(req, res, next) {
       throw new ApiError(400, "El campo 'to' debe ser 'es' o 'en'");
     }
 
-    const translation = await translateText(text.trim(), to);
+    // El mismo texto al mismo idioma siempre traduce igual → caché de 24 h.
+    const cleanText = text.trim();
+    const { value: translation, hit } = await cached(
+      `translate:${to}:${cleanText}`,
+      TTL.translation,
+      () => translateText(cleanText, to),
+    );
+
+    res.set("X-Cache", hit ? "HIT" : "MISS");
     res.json({ translation });
   } catch (error) {
     next(error);
