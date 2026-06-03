@@ -1,12 +1,21 @@
 // Muestra UN paper. Componente de presentación puro: recibe el paper por props
 // y solo lo dibuja. Reutilizable en resultados, favoritos o detalle.
-export function PaperCard({ paper }) {
+// Al hacer click en el título avisa al padre con onSelect(id) para abrir el detalle.
+export function PaperCard({ paper, onSelect }) {
   const authors = formatAuthors(paper.authors);
 
   return (
     <article className="paper-card">
       <header className="paper-card__header">
-        <h3 className="paper-card__title">{paper.title}</h3>
+        <h3 className="paper-card__title">
+          <button
+            className="paper-card__title-button"
+            type="button"
+            onClick={() => onSelect(paper.id)}
+          >
+            {paper.title}
+          </button>
+        </h3>
         {paper.isOpenAccess && (
           <span className="paper-card__badge" title="Acceso abierto">
             Acceso abierto

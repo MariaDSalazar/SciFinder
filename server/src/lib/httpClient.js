@@ -2,19 +2,23 @@ import { ApiError } from "./ApiError.js";
 
 // Cliente HTTP reutilizable sobre fetch.
 // Hace un GET, espera JSON y traduce cualquier fallo de red a un ApiError claro.
-// Lo usarán todos los servicios externos (OpenAlex, y luego Semantic Scholar, etc.).
-export async function fetchJson(url, { timeoutMs = 10000 } = {}) {
+// Acepta cabeceras extra (ej. la API key de Semantic Scholar).
+// Si la fuente responde con error, expone "externalStatus" para que el servicio
+// que llama pueda traducirlo (ej. 404 externo → "paper no encontrado").
+export async function fetchJson(url, { timeoutMs = 10000, headers = {} } = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const response = await fetch(url, {
-      headers: { Accept: "application/json" },
+      headers: { Accept: "application/json", ...headers },
       signal: controller.signal,
     });
 
     if (!response.ok) {
-      throw new ApiError(502, `La fuente externa respondió con estado ${response.status}`);
+      const error = new ApiError(502, `La fuente externa respondió con estado ${response.status}`);
+      error.externalStatus = response.status;
+      throw error;
     }
 
     return await response.json();

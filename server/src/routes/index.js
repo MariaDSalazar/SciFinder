@@ -1,5 +1,6 @@
 import { Router } from "express";
 import searchRoutes from "./search.routes.js";
+import papersRoutes from "./papers.routes.js";
 
 // Enrutador raíz de la API. Aquí se montan todos los grupos de rutas.
 // Todo cuelga de "/api" (ver app.js).
@@ -11,5 +12,6 @@ router.get("/health", (req, res) => {
 });
 
 router.use(searchRoutes);
+router.use(papersRoutes);
 
 export default router;

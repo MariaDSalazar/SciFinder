@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { SearchBar } from "./components/SearchBar.jsx";
 import { PaperList } from "./components/PaperList.jsx";
+import { PaperDetail } from "./components/PaperDetail.jsx";
 import { StatusMessage } from "./components/StatusMessage.jsx";
 import { usePaperSearch } from "./hooks/usePaperSearch.js";
 import "./App.css";
@@ -8,6 +10,7 @@ import "./App.css";
 // La lógica de búsqueda vive en el hook; aquí solo coordinamos la vista.
 export default function App() {
   const { results, total, status, error, search } = usePaperSearch();
+  const [selectedPaperId, setSelectedPaperId] = useState(null);
 
   return (
     <div className="app">
@@ -18,14 +21,20 @@ export default function App() {
 
       <SearchBar onSearch={search} disabled={status === "loading"} />
 
-      <main className="app__results">{renderResults({ results, total, status, error })}</main>
+      <main className="app__results">
+        {renderResults({ results, total, status, error, onSelectPaper: setSelectedPaperId })}
+      </main>
+
+      {selectedPaperId && (
+        <PaperDetail paperId={selectedPaperId} onClose={() => setSelectedPaperId(null)} />
+      )}
     </div>
   );
 }
 
 // Elige el contenido según el estado de la búsqueda. Separar esta decisión
 // mantiene el JSX del componente principal limpio y fácil de leer.
-function renderResults({ results, total, status, error }) {
+function renderResults({ results, total, status, error, onSelectPaper }) {
   if (status === "idle") {
     return <StatusMessage icon="🔎">Escribe un tema y presiona “Buscar” para empezar.</StatusMessage>;
   }
@@ -42,7 +51,7 @@ function renderResults({ results, total, status, error }) {
   return (
     <>
       <p className="app__count">{total.toLocaleString("es")} resultados encontrados</p>
-      <PaperList papers={results} />
+      <PaperList papers={results} onSelectPaper={onSelectPaper} />
     </>
   );
 }

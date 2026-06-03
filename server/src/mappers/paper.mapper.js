@@ -5,7 +5,7 @@ import { reconstructAbstract } from "../lib/reconstructAbstract.js";
 // entera: solo este mapper conoce el formato externo. Es nuestro "contrato" de datos.
 export function toPaper(work) {
   return {
-    id: work.id,
+    id: toShortId(work.id),
     doi: work.doi ?? null,
     title: work.display_name ?? "Sin título",
     abstract: reconstructAbstract(work.abstract_inverted_index),
@@ -19,4 +19,10 @@ export function toPaper(work) {
     pdfUrl: work.best_oa_location?.pdf_url ?? work.open_access?.oa_url ?? null,
     landingUrl: work.doi ?? work.id,
   };
+}
+
+// OpenAlex identifica con URLs ("https://openalex.org/W123...").
+// Nos quedamos con el id corto ("W123...") para usarlo en nuestras rutas.
+function toShortId(openAlexUrl) {
+  return openAlexUrl?.split("/").pop() ?? null;
 }

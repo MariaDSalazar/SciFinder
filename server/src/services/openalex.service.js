@@ -1,4 +1,5 @@
 import { config } from "../config/env.js";
+import { ApiError } from "../lib/ApiError.js";
 import { fetchJson } from "../lib/httpClient.js";
 import { toPaper } from "../mappers/paper.mapper.js";
 
@@ -48,4 +49,21 @@ export async function searchPapers({ query, page, perPage, sort, fromYear, toYea
     page,
     perPage,
   };
+}
+
+// Obtiene UN paper por su id corto de OpenAlex (ej. "W2741809807").
+// Traduce el 404 externo a un 404 nuestro con mensaje claro.
+export async function getPaperById(openAlexId) {
+  const params = new URLSearchParams({ select: FIELDS });
+  const url = `${config.openAlex.baseUrl}/works/${openAlexId}?${params}`;
+
+  try {
+    const work = await fetchJson(url);
+    return toPaper(work);
+  } catch (error) {
+    if (error.externalStatus === 404) {
+      throw new ApiError(404, "No se encontró el paper solicitado");
+    }
+    throw error;
+  }
 }

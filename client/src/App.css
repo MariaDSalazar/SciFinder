@@ -123,6 +123,19 @@
   line-height: 1.35;
 }
 
+/* El título es un botón (abre el detalle) pero se ve como un enlace. */
+.paper-card__title-button {
+  all: unset;
+  cursor: pointer;
+  color: var(--color-text);
+  font: inherit;
+}
+
+.paper-card__title-button:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
 .paper-card__badge {
   flex-shrink: 0;
   font-size: 0.7rem;
@@ -176,6 +189,109 @@
   display: block;
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
+}
+
+/* ── Modal de detalle ───────────────────────────── */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+
+.modal__content {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 40px rgba(10, 20, 50, 0.25);
+  max-width: 680px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 1.75rem;
+}
+
+.modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  border: none;
+  background: var(--color-bg);
+  color: var(--color-muted);
+  font-size: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.modal__close:hover {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+/* ── Detalle del paper ──────────────────────────── */
+.paper-detail__title {
+  margin: 0 1.5rem 0.5rem 0;
+  font-size: 1.4rem;
+  line-height: 1.3;
+}
+
+.paper-detail__meta {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.paper-detail__authors {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #36405a;
+}
+
+.paper-detail__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.paper-detail__section {
+  margin-top: 1.25rem;
+}
+
+.paper-detail__section h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+.paper-detail__section p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #36405a;
+}
+
+/* El TLDR destaca como bloque de resumen rápido. */
+.paper-detail__tldr {
+  background: #eef4ff;
+  border: 1px solid #d8e4fd;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+
+.paper-detail__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
 }
 
 /* ── Responsive ─────────────────────────────────── */

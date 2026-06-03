@@ -5,4 +5,9 @@ export const config = {
   openAlex: {
     baseUrl: "https://api.openalex.org",
   },
+  semanticScholar: {
+    baseUrl: "https://api.semanticscholar.org",
+    // Opcional: sin key funciona (cupo compartido); con key hay cupo propio.
+    apiKey: process.env.SEMANTIC_SCHOLAR_API_KEY || null,
+  },
 };
