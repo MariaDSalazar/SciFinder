@@ -1,122 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { SearchBar } from "./components/SearchBar.jsx";
+import { PaperList } from "./components/PaperList.jsx";
+import { StatusMessage } from "./components/StatusMessage.jsx";
+import { usePaperSearch } from "./hooks/usePaperSearch.js";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Componente principal: compone la página y decide QUÉ mostrar según el estado.
+// La lógica de búsqueda vive en el hook; aquí solo coordinamos la vista.
+export default function App() {
+  const { results, total, status, error, search } = usePaperSearch();
+
+  return (
+    <div className="app">
+      <header className="app__header">
+        <h1 className="app__title">🔬 SciFinder</h1>
+        <p className="app__subtitle">Busca papers científicos reales</p>
+      </header>
+
+      <SearchBar onSearch={search} disabled={status === "loading"} />
+
+      <main className="app__results">{renderResults({ results, total, status, error })}</main>
+    </div>
+  );
+}
+
+// Elige el contenido según el estado de la búsqueda. Separar esta decisión
+// mantiene el JSX del componente principal limpio y fácil de leer.
+function renderResults({ results, total, status, error }) {
+  if (status === "idle") {
+    return <StatusMessage icon="🔎">Escribe un tema y presiona “Buscar” para empezar.</StatusMessage>;
+  }
+  if (status === "loading") {
+    return <StatusMessage icon="⏳">Buscando papers...</StatusMessage>;
+  }
+  if (status === "error") {
+    return <StatusMessage icon="⚠️">{error}</StatusMessage>;
+  }
+  if (results.length === 0) {
+    return <StatusMessage icon="🤷">No se encontraron resultados. Prueba con otros términos.</StatusMessage>;
+  }
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <p className="app__count">{total.toLocaleString("es")} resultados encontrados</p>
+      <PaperList papers={results} />
     </>
-  )
+  );
 }
-
-export default App

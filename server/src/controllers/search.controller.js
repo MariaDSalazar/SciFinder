@@ -20,7 +20,16 @@ function parseSearchParams(query) {
 
   const sort = VALID_SORTS.includes(query.sort) ? query.sort : "relevance";
 
-  return { query: term, page, perPage, sort };
+  const fromYear = parseYear(query.fromYear);
+  const toYear = parseYear(query.toYear);
+
+  return { query: term, page, perPage, sort, fromYear, toYear };
+}
+
+// Convierte un año a número; devuelve undefined si no es válido (así se ignora el filtro).
+function parseYear(value) {
+  const year = Number.parseInt(value, 10);
+  return Number.isNaN(year) ? undefined : year;
 }
 
 // GET /api/search — orquesta: validar entrada → buscar → responder.

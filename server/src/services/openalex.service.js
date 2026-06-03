@@ -24,7 +24,7 @@ const SORT_OPTIONS = {
 };
 
 // Busca papers en OpenAlex y devuelve resultados ya limpios + datos de paginación.
-export async function searchPapers({ query, page, perPage, sort }) {
+export async function searchPapers({ query, page, perPage, sort, fromYear, toYear }) {
   const params = new URLSearchParams({
     search: query,
     page: String(page),
@@ -32,6 +32,12 @@ export async function searchPapers({ query, page, perPage, sort }) {
     select: FIELDS,
     sort: SORT_OPTIONS[sort] ?? SORT_OPTIONS.relevance,
   });
+
+  // Filtro por rango de años (opcional). OpenAlex los combina con AND.
+  const filters = [];
+  if (fromYear) filters.push(`from_publication_date:${fromYear}-01-01`);
+  if (toYear) filters.push(`to_publication_date:${toYear}-12-31`);
+  if (filters.length > 0) params.set("filter", filters.join(","));
 
   const url = `${config.openAlex.baseUrl}/works?${params}`;
   const data = await fetchJson(url);

@@ -131,7 +131,7 @@ OpenAlex es la base. Las demás APIs **enriquecen** cada paper (resúmenes con I
 
 - [x] **Fase 0 — Preparación:** ✅ Node.js v24 verificado; frontend creado con Vite (React) en `client/`; backend Express en `server/` con endpoint de salud `/api/health`; Git inicializado y subido a GitHub (privado). Estructura `client/` + `server/` lista.
 - [x] **Fase 1 — Backend mínimo + API:** ✅ Arquitectura por capas (routes → controller → service → mapper, con `lib/` y middleware). Endpoint `GET /api/search?q=&page=&perPage=&sort=` que consulta OpenAlex, reconstruye el abstract y devuelve papers limpios. Incluye validación (400), 404 y manejo central de errores. Probado contra OpenAlex real.
-- [ ] **Fase 2 — Frontend conectado:** caja de búsqueda en React que consume NUESTRO `/api/search`. Mostrar resultados en una lista. Filtro por año y orden por citas.
+- [x] **Fase 2 — Frontend conectado:** ✅ React consume `/api/search` vía capa `services/` + hook `usePaperSearch`. Componentes reutilizables (`SearchBar`, `PaperCard`, `PaperList`, `StatusMessage`). Filtro por año (desde/hasta) y orden por citas/relevancia. Estados de carga/error/vacío. Diseño limpio y responsive.
 - [ ] **Fase 3 — Detalle + enriquecimiento:** vista de detalle; el backend agrega el TLDR (Semantic Scholar) y enlace al PDF/DOI.
 - [ ] **Fase 4 — Base de datos + Favoritos:** configurar PostgreSQL + Prisma. Endpoints `POST/GET/DELETE /api/favorites`. Frontend para marcar y listar favoritos. Guardar también historial de búsquedas.
 - [ ] **Fase 5 — Citas y gráficas:** integrar OpenCitations (red de citas) y mostrar estadísticas visuales (Recharts).
