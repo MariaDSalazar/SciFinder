@@ -10,6 +10,7 @@ import { FavoritesView } from "./components/FavoritesView.jsx";
 import { ResultsCharts } from "./components/ResultsCharts.jsx";
 import { usePaperSearch } from "./hooks/usePaperSearch.js";
 import { useFavorites } from "./hooks/useFavorites.js";
+import { useEnglishSuggestion } from "./hooks/useEnglishSuggestion.js";
 import "./App.css";
 
 // Componente principal: compone la página y decide QUÉ mostrar según el estado.
@@ -23,17 +24,25 @@ export default function App() {
     byYear,
     status,
     error,
+    searchedQuery,
     loadingMore,
     hasMore,
     search,
     loadMore,
   } = usePaperSearch();
   const favoritesState = useFavorites();
+  // Estado de búsqueda y filtros: el App es la única fuente de verdad, así
+  // cualquier camino (botón, recientes, gráfica, sugerencia) respeta los filtros.
   const [query, setQuery] = useState("");
   const [fromYear, setFromYear] = useState("");
   const [toYear, setToYear] = useState("");
+  const [sort, setSort] = useState("relevance");
+  const [engine, setEngine] = useState("openalex");
   const [selectedPaperId, setSelectedPaperId] = useState(null);
   const [view, setView] = useState("search");
+
+  // Sugerencia del término en inglés (las APIs indexan mayormente en inglés).
+  const englishSuggestion = useEnglishSuggestion(searchedQuery, status);
 
   // Calentamiento: al abrir la app se hace un ping al backend para que el
   // servidor gratuito despierte mientras el usuario escribe su búsqueda.
@@ -41,10 +50,24 @@ export default function App() {
     pingHealth().catch(() => {});
   }, []);
 
-  // Click en una búsqueda reciente: llena el campo y busca de inmediato.
-  function handlePickRecent(recentQuery) {
-    setQuery(recentQuery);
-    search({ query: recentQuery });
+  // Lanza una búsqueda con los filtros actuales (opcionalmente con otro término).
+  function runSearch(term = query) {
+    const trimmed = term.trim();
+    if (!trimmed) return;
+    search({
+      query: trimmed,
+      fromYear: fromYear || undefined,
+      toYear: toYear || undefined,
+      sort,
+      engine,
+    });
+  }
+
+  // Click en una búsqueda reciente o en la sugerencia en inglés:
+  // llena el campo y busca de inmediato respetando los filtros.
+  function handlePickQuery(pickedQuery) {
+    setQuery(pickedQuery);
+    runSearch(pickedQuery);
   }
 
   // Al guardar desde los resultados, el favorito se etiqueta con el tema buscado.
@@ -92,12 +115,16 @@ export default function App() {
             onFromYearChange={setFromYear}
             toYear={toYear}
             onToYearChange={setToYear}
-            onSearch={search}
+            sort={sort}
+            onSortChange={setSort}
+            engine={engine}
+            onEngineChange={setEngine}
+            onSearch={runSearch}
             disabled={status === "loading"}
             yearRange={yearRange}
           />
           <main className="app__results">
-            {status === "idle" && <RecentSearches onPick={handlePickRecent} />}
+            {status === "idle" && <RecentSearches onPick={handlePickQuery} />}
             {renderResults({
               results,
               total,
@@ -105,6 +132,8 @@ export default function App() {
               byYear,
               status,
               error,
+              englishSuggestion,
+              onPickSuggestion: handlePickQuery,
               isFavorite: favoritesState.isFavorite,
               onToggleFavorite: handleToggleFavorite,
               onSelectPaper: setSelectedPaperId,
@@ -162,6 +191,8 @@ function renderResults({
   byYear,
   status,
   error,
+  englishSuggestion,
+  onPickSuggestion,
   isFavorite,
   onToggleFavorite,
   onSelectPaper,
@@ -185,6 +216,16 @@ function renderResults({
 
   return (
     <>
+      {englishSuggestion && (
+        <button
+          className="app__suggestion"
+          type="button"
+          onClick={() => onPickSuggestion(englishSuggestion)}
+        >
+          💡 Las fuentes científicas indexan en inglés — ¿buscar también{" "}
+          <strong>“{englishSuggestion}”</strong>?
+        </button>
+      )}
       <p className="app__count">
         {total.toLocaleString("es")} resultados encontrados{formatTotalsBreakdown(totals)}
       </p>

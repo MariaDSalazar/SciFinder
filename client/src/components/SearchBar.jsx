@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 // Opciones centralizadas para no repetir cadenas mágicas.
 const SORT_OPTIONS = [
@@ -20,10 +20,11 @@ const ENGINE_OPTIONS = [
 // el ritmo de Semantic Scholar (~1 petición/segundo con API key).
 const AUTO_SEARCH_DELAY = 1000;
 
-// Caja de búsqueda con filtros (año desde/hasta), orden y MOTOR de búsqueda.
-// El término (query) y los años viven en el padre — así "búsquedas recientes"
-// puede llenar el campo y el click en la gráfica puede fijar el año.
-// Al cambiar cualquier filtro con un tema ya escrito, re-busca automáticamente.
+// Caja de búsqueda totalmente controlada: TODO el estado (término, años,
+// orden y motor) vive en el padre — única fuente de verdad para que las
+// búsquedas desde "recientes", la gráfica o la sugerencia en inglés respeten
+// siempre los filtros visibles. Al cambiar cualquier filtro con un tema
+// escrito, re-busca automáticamente.
 export function SearchBar({
   query,
   onQueryChange,
@@ -31,31 +32,27 @@ export function SearchBar({
   onFromYearChange,
   toYear,
   onToYearChange,
+  sort,
+  onSortChange,
+  engine,
+  onEngineChange,
   onSearch,
   disabled,
   yearRange,
 }) {
-  const [sort, setSort] = useState("relevance");
-  const [engine, setEngine] = useState("openalex");
-
   // Límites de los campos de año: el rango real si lo conocemos; si no, uno amplio.
   const minYear = yearRange?.from ?? 1500;
   const maxYear = yearRange?.to ?? new Date().getFullYear();
 
-  function buildParams() {
-    return {
-      query: query.trim(),
-      fromYear: fromYear || undefined,
-      toYear: toYear || undefined,
-      sort,
-      engine,
-    };
-  }
-
   function handleSubmit(event) {
     event.preventDefault();
     if (!query.trim()) return;
-    onSearch(buildParams());
+    onSearch();
+  }
+
+  function handleClearYears() {
+    onFromYearChange("");
+    onToYearChange("");
   }
 
   // Re-búsqueda automática al cambiar filtros (no al escribir el tema:
@@ -68,7 +65,7 @@ export function SearchBar({
     }
     if (!query.trim()) return;
 
-    const timer = setTimeout(() => onSearch(buildParams()), AUTO_SEARCH_DELAY);
+    const timer = setTimeout(onSearch, AUTO_SEARCH_DELAY);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- solo filtros: el tema se busca con el botón
   }, [fromYear, toYear, sort, engine]);
@@ -109,9 +106,20 @@ export function SearchBar({
           />
         </label>
 
+        {(fromYear || toYear) && (
+          <button
+            className="search-bar__clear-years"
+            type="button"
+            onClick={handleClearYears}
+            title="Quitar el filtro de años"
+          >
+            ✕ Quitar años
+          </button>
+        )}
+
         <label className="search-bar__field">
           Orden
-          <select value={sort} onChange={(event) => setSort(event.target.value)}>
+          <select value={sort} onChange={(event) => onSortChange(event.target.value)}>
             {SORT_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -122,7 +130,7 @@ export function SearchBar({
 
         <label className="search-bar__field">
           Motor
-          <select value={engine} onChange={(event) => setEngine(event.target.value)}>
+          <select value={engine} onChange={(event) => onEngineChange(event.target.value)}>
             {ENGINE_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}

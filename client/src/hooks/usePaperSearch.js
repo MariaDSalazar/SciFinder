@@ -14,6 +14,7 @@ export function usePaperSearch() {
   const [status, setStatus] = useState("idle");
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
+  const [searchedQuery, setSearchedQuery] = useState(null); // término de la última búsqueda
 
   const lastParamsRef = useRef(null); // parámetros de la última búsqueda (para pedir más páginas)
   const pageRef = useRef(1);
@@ -23,6 +24,7 @@ export function usePaperSearch() {
     const requestId = ++requestIdRef.current;
     lastParamsRef.current = params;
     pageRef.current = 1;
+    setSearchedQuery(params.query);
     setStatus("loading");
     setError(null);
     try {
@@ -70,6 +72,7 @@ export function usePaperSearch() {
     byYear,
     status,
     error,
+    searchedQuery,
     loadingMore,
     // Hay más por cargar mientras tengamos menos resultados que el total.
     hasMore: results.length > 0 && results.length < total,
