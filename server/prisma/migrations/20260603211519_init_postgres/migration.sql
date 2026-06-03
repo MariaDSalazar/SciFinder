@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "FavoritePaper" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "authors" TEXT NOT NULL,
     "venue" TEXT,
@@ -11,13 +11,18 @@ CREATE TABLE "FavoritePaper" (
     "landingUrl" TEXT,
     "isOpenAccess" BOOLEAN NOT NULL DEFAULT false,
     "abstract" TEXT,
-    "savedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "topic" TEXT,
+    "savedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "FavoritePaper_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "SearchHistory" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "query" TEXT NOT NULL,
     "total" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "SearchHistory_pkey" PRIMARY KEY ("id")
 );

@@ -1,13 +1,13 @@
 // Esquema de la base de datos de SciFinder.
-// Desarrollo local: SQLite (archivo, sin instalar nada).
-// Producción: cambiar provider a "postgresql" y apuntar DATABASE_URL al servidor.
+// PostgreSQL en Neon (https://neon.tech): la misma base sirve para
+// desarrollo local y producción; la URL llega por DATABASE_URL.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
