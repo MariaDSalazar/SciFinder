@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { usePaperDetail } from "../hooks/usePaperDetail.js";
 import { StatusMessage } from "./StatusMessage.jsx";
+import { LoadingMessage } from "./LoadingMessage.jsx";
 import { CitationBox } from "./CitationBox.jsx";
 import { TranslatableText } from "./TranslatableText.jsx";
 
@@ -26,7 +27,7 @@ export function PaperDetail({ paperId, onClose }) {
           ✕
         </button>
 
-        {status === "loading" && <StatusMessage spinner>Cargando detalle...</StatusMessage>}
+        {status === "loading" && <LoadingMessage>Cargando detalle...</LoadingMessage>}
         {status === "error" && <StatusMessage icon="⚠️">{error}</StatusMessage>}
         {status === "success" && paper && <PaperDetailContent paper={paper} />}
       </div>

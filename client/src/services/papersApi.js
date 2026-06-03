@@ -62,3 +62,9 @@ export function removeFavorite(paperId) {
 export function getRecentSearches() {
   return requestJson("/api/history");
 }
+
+// Ping de calentamiento: se llama al abrir la app para DESPERTAR el backend
+// gratuito (Render lo duerme tras ~15 min sin uso) mientras el usuario escribe.
+export function pingHealth() {
+  return requestJson("/api/health");
+}

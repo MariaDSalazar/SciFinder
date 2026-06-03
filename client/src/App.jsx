@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchBar } from "./components/SearchBar.jsx";
 import { PaperList } from "./components/PaperList.jsx";
 import { PaperDetail } from "./components/PaperDetail.jsx";
 import { StatusMessage } from "./components/StatusMessage.jsx";
+import { LoadingMessage } from "./components/LoadingMessage.jsx";
+import { pingHealth } from "./services/papersApi.js";
 import { RecentSearches } from "./components/RecentSearches.jsx";
 import { FavoritesView } from "./components/FavoritesView.jsx";
 import { ResultsCharts } from "./components/ResultsCharts.jsx";
@@ -32,6 +34,12 @@ export default function App() {
   const [toYear, setToYear] = useState("");
   const [selectedPaperId, setSelectedPaperId] = useState(null);
   const [view, setView] = useState("search");
+
+  // Calentamiento: al abrir la app se hace un ping al backend para que el
+  // servidor gratuito despierte mientras el usuario escribe su búsqueda.
+  useEffect(() => {
+    pingHealth().catch(() => {});
+  }, []);
 
   // Click en una búsqueda reciente: llena el campo y busca de inmediato.
   function handlePickRecent(recentQuery) {
@@ -166,7 +174,7 @@ function renderResults({
     return <StatusMessage icon="🔎">Escribe un tema y presiona “Buscar” para empezar.</StatusMessage>;
   }
   if (status === "loading") {
-    return <StatusMessage spinner>Buscando papers...</StatusMessage>;
+    return <LoadingMessage>Buscando papers...</LoadingMessage>;
   }
   if (status === "error") {
     return <StatusMessage icon="⚠️">{error}</StatusMessage>;
