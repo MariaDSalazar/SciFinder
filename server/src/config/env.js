@@ -16,4 +16,10 @@ export const config = {
   openCitations: {
     baseUrl: "https://api.opencitations.net/index/v2",
   },
+  crossref: {
+    baseUrl: "https://api.crossref.org",
+  },
+  europePmc: {
+    baseUrl: "https://www.ebi.ac.uk/europepmc/webservices/rest",
+  },
 };

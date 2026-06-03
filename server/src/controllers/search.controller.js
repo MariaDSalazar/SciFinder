@@ -5,7 +5,7 @@ import { recordSearch } from "../services/history.service.js";
 const DEFAULT_PER_PAGE = 25;
 const MAX_PER_PAGE = 50;
 const VALID_SORTS = ["relevance", "citations"];
-const VALID_ENGINES = ["openalex", "semanticscholar", "all"];
+const VALID_ENGINES = ["openalex", "semanticscholar", "crossref", "europepmc", "all"];
 
 // Lee, valida y normaliza los parámetros de la query string.
 // Mantiene al controlador delgado y deja la entrada en un formato seguro.

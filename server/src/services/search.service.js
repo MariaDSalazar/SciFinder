@@ -1,23 +1,35 @@
 import * as openAlex from "./openalex.service.js";
 import { searchPapersS2 } from "./semanticscholar.service.js";
+import { searchPapersCrossref } from "./crossref.service.js";
+import { searchPapersEuropePmc } from "./europepmc.service.js";
+
+// Registro de motores SECUNDARIOS. Agregar un motor nuevo = una entrada aquí
+// (más su servicio y mapper). "key" es el nombre que ve el frontend en totals.
+const SECONDARY_ENGINES = {
+  semanticscholar: { search: searchPapersS2, key: "semanticScholar" },
+  crossref: { search: searchPapersCrossref, key: "crossref" },
+  europepmc: { search: searchPapersEuropePmc, key: "europePmc" },
+};
 
 // Orquestador de motores de búsqueda. Según "engine":
-//   "openalex"        → solo OpenAlex
-//   "semanticscholar" → solo Semantic Scholar
-//   "all"             → ambos en paralelo, combinados sin duplicados (por DOI)
+//   "openalex"             → solo OpenAlex (motor principal)
+//   nombre de un secundario → solo ese motor
+//   "all"                  → todos en paralelo, combinados sin duplicados (por DOI)
 // Las estadísticas por año (gráfica/rango) siempre salen de la agregación de
 // OpenAlex: describen el TEMA completo, sea cual sea el motor elegido.
 export async function searchPapers(params) {
-  if (params.engine === "semanticscholar") {
-    const [s2, yearStats] = await Promise.all([
-      searchPapersS2(params),
+  const secondary = SECONDARY_ENGINES[params.engine];
+
+  if (secondary) {
+    const [response, yearStats] = await Promise.all([
+      secondary.search(params),
       openAlex.getYearStats(params.query).catch(() => null),
     ]);
 
     return {
-      results: s2.results,
-      total: s2.total,
-      totals: { semanticScholar: s2.total },
+      results: response.results,
+      total: response.total,
+      totals: { [secondary.key]: response.total },
       page: params.page,
       perPage: params.perPage,
       yearRange: yearStats ? { from: yearStats.from, to: yearStats.to } : null,
@@ -26,19 +38,32 @@ export async function searchPapers(params) {
   }
 
   if (params.engine === "all") {
-    // Si Semantic Scholar falla (suele saturarse sin API key), los resultados
-    // de OpenAlex salen igual: un motor caído no tumba la búsqueda combinada.
-    const [oa, s2] = await Promise.all([
+    // Todos los motores en paralelo. Un secundario caído (suele pasar con
+    // Semantic Scholar sin key) no tumba la búsqueda combinada: queda en null.
+    const names = Object.keys(SECONDARY_ENGINES);
+    const [oa, ...others] = await Promise.all([
       openAlex.searchPapers(params),
-      searchPapersS2(params).catch(() => null),
+      ...names.map((name) => SECONDARY_ENGINES[name].search(params).catch(() => null)),
     ]);
 
-    return {
-      ...oa,
-      results: mergeByDoi(oa.results, s2?.results ?? [], params.sort),
-      total: oa.total + (s2?.total ?? 0),
-      totals: { openAlex: oa.total, semanticScholar: s2?.total ?? null },
-    };
+    let results = oa.results;
+    let total = oa.total;
+    const totals = { openAlex: oa.total };
+
+    names.forEach((name, index) => {
+      const response = others[index];
+      totals[SECONDARY_ENGINES[name].key] = response?.total ?? null;
+      if (response) {
+        results = mergeByDoi(results, response.results);
+        total += response.total;
+      }
+    });
+
+    if (params.sort === "citations") {
+      results.sort((a, b) => b.citations - a.citations);
+    }
+
+    return { ...oa, results, total, totals };
   }
 
   const oa = await openAlex.searchPapers(params);
@@ -46,8 +71,8 @@ export async function searchPapers(params) {
 }
 
 // Une dos listas de papers evitando duplicados (mismo DOI = mismo paper).
-// Con orden por citas, la lista combinada se reordena completa.
-function mergeByDoi(primary, secondary, sort) {
+// Se queda con la versión de la lista primaria (la primera en llegar).
+function mergeByDoi(primary, secondary) {
   const seenDois = new Set(
     primary.map((paper) => paper.doi?.toLowerCase()).filter(Boolean),
   );
@@ -56,11 +81,8 @@ function mergeByDoi(primary, secondary, sort) {
   for (const paper of secondary) {
     const doi = paper.doi?.toLowerCase();
     if (doi && seenDois.has(doi)) continue;
+    if (doi) seenDois.add(doi);
     merged.push(paper);
-  }
-
-  if (sort === "citations") {
-    merged.sort((a, b) => b.citations - a.citations);
   }
   return merged;
 }

@@ -9,6 +9,8 @@ const SORT_OPTIONS = [
 const ENGINE_OPTIONS = [
   { value: "openalex", label: "OpenAlex" },
   { value: "semanticscholar", label: "Semantic Scholar" },
+  { value: "crossref", label: "Crossref" },
+  { value: "europepmc", label: "Europe PMC" },
   { value: "all", label: "Todos los motores" },
 ];
 

@@ -91,6 +91,25 @@ export default function App() {
   );
 }
 
+// Nombres legibles de cada motor para el desglose de totales.
+const ENGINE_LABELS = {
+  openAlex: "OpenAlex",
+  semanticScholar: "Semantic Scholar",
+  crossref: "Crossref",
+  europePmc: "Europe PMC",
+};
+
+// " (OpenAlex: 1.200 · Crossref: 800 · Semantic Scholar: sin respuesta)"
+// Solo se muestra cuando hay más de un motor (búsqueda combinada).
+function formatTotalsBreakdown(totals) {
+  if (!totals || Object.keys(totals).length <= 1) return "";
+  const parts = Object.entries(totals).map(([key, value]) => {
+    const label = ENGINE_LABELS[key] ?? key;
+    return value === null ? `${label}: sin respuesta` : `${label}: ${value.toLocaleString("es")}`;
+  });
+  return ` (${parts.join(" · ")})`;
+}
+
 // Elige el contenido según el estado de la búsqueda. Separar esta decisión
 // mantiene el JSX del componente principal limpio y fácil de leer.
 function renderResults({
@@ -120,14 +139,7 @@ function renderResults({
   return (
     <>
       <p className="app__count">
-        {total.toLocaleString("es")} resultados encontrados
-        {totals?.openAlex != null && totals?.semanticScholar != null && (
-          <>
-            {" "}
-            (OpenAlex: {totals.openAlex.toLocaleString("es")} · Semantic Scholar:{" "}
-            {totals.semanticScholar.toLocaleString("es")})
-          </>
-        )}
+        {total.toLocaleString("es")} resultados encontrados{formatTotalsBreakdown(totals)}
       </p>
       <ResultsCharts byYear={byYear} results={results} />
       <PaperList
