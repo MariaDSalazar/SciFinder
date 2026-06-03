@@ -1,0 +1,16 @@
+{
+  "name": "scifinder-server",
+  "version": "0.1.0",
+  "description": "Backend de SciFinder (Node.js + Express): proxy y orquestador de APIs científicas",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/index.js",
+    "start": "node --env-file=.env src/index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}
