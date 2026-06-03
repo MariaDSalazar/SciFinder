@@ -38,3 +38,21 @@ export function getPaper(paperId) {
 export function translateText(text, to) {
   return requestJson("/api/translate", { method: "POST", body: { text, to } });
 }
+
+// ── Favoritos (persisten en la base de datos del backend) ──
+export function getFavorites() {
+  return requestJson("/api/favorites");
+}
+
+export function addFavorite(paper) {
+  return requestJson("/api/favorites", { method: "POST", body: paper });
+}
+
+export function removeFavorite(paperId) {
+  return requestJson(`/api/favorites/${encodeURIComponent(paperId)}`, { method: "DELETE" });
+}
+
+// ── Historial de búsquedas ──
+export function getRecentSearches() {
+  return requestJson("/api/history");
+}

@@ -1,0 +1,39 @@
+// Esquema de la base de datos de SciFinder.
+// Desarrollo local: SQLite (archivo, sin instalar nada).
+// Producción: cambiar provider a "postgresql" y apuntar DATABASE_URL al servidor.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Un paper guardado como favorito. Se usa el id corto de OpenAlex como clave
+// primaria (es único y estable). "authors" se guarda como JSON en texto
+// porque SQLite no tiene arrays; el mapper lo convierte de ida y vuelta.
+model FavoritePaper {
+  id           String   @id
+  title        String
+  authors      String
+  venue        String?
+  year         Int?
+  citations    Int      @default(0)
+  doi          String?
+  pdfUrl       String?
+  landingUrl   String?
+  isOpenAccess Boolean  @default(false)
+  abstract     String?
+  savedAt      DateTime @default(now())
+}
+
+// Registro de cada búsqueda realizada (para "búsquedas recientes" y, más
+// adelante, estadísticas de uso).
+model SearchHistory {
+  id        Int      @id @default(autoincrement())
+  query     String
+  total     Int
+  createdAt DateTime @default(now())
+}

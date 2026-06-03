@@ -1,5 +1,6 @@
 import { ApiError } from "../lib/ApiError.js";
 import { searchPapers } from "../services/openalex.service.js";
+import { recordSearch } from "../services/history.service.js";
 
 const DEFAULT_PER_PAGE = 25;
 const MAX_PER_PAGE = 50;
@@ -38,6 +39,11 @@ export async function handleSearch(req, res, next) {
   try {
     const params = parseSearchParams(req.query);
     const data = await searchPapers(params);
+
+    // El historial se guarda "en segundo plano": si fallara,
+    // no debe afectar la respuesta de la búsqueda.
+    recordSearch({ query: params.query, total: data.total }).catch(() => {});
+
     res.json(data);
   } catch (error) {
     next(error);

@@ -7,11 +7,10 @@ const SORT_OPTIONS = [
 ];
 
 // Caja de búsqueda con filtros (año desde/hasta) y orden.
-// Es un componente "controlado": guarda su propio estado y, al enviar,
-// avisa al padre mediante onSearch(params). No sabe nada de cómo se buscan los datos.
+// El término de búsqueda (query) vive en el padre — así otras piezas, como
+// "búsquedas recientes", pueden llenarlo. Los filtros son estado propio.
 // "yearRange" (si existe) acota los años a aquellos donde realmente hay papers.
-export function SearchBar({ onSearch, disabled, yearRange }) {
-  const [query, setQuery] = useState("");
+export function SearchBar({ query, onQueryChange, onSearch, disabled, yearRange }) {
   const [fromYear, setFromYear] = useState("");
   const [toYear, setToYear] = useState("");
   const [sort, setSort] = useState("relevance");
@@ -39,7 +38,7 @@ export function SearchBar({ onSearch, disabled, yearRange }) {
         type="text"
         placeholder="Busca un tema (ej. machine learning, cáncer, energía solar...)"
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => onQueryChange(event.target.value)}
         aria-label="Término de búsqueda"
       />
 

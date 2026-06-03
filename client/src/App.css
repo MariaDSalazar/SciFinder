@@ -26,6 +26,58 @@
   margin: 1.5rem 0 0.75rem;
 }
 
+/* ── Pestañas Buscar / Favoritos ────────────────── */
+.app__tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.app__tab {
+  padding: 0.5rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.app__tab--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+/* ── Búsquedas recientes ────────────────────────── */
+.recent-searches {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.recent-searches__label {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.recent-searches__chip {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.recent-searches__chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
 /* ── Barra de búsqueda ──────────────────────────── */
 .search-bar {
   background: var(--color-surface);
@@ -140,6 +192,25 @@
 .paper-card__title-button:hover {
   color: var(--color-primary);
   text-decoration: underline;
+}
+
+/* Estrella de favorito en la esquina de la tarjeta. */
+.paper-card__fav {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-muted);
+}
+
+.paper-card__fav:hover {
+  transform: scale(1.15);
+}
+
+.paper-card__fav--active {
+  color: #f5a623;
 }
 
 .paper-card__badge {

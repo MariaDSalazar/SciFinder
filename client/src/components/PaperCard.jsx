@@ -1,8 +1,9 @@
 // Muestra UN paper. Componente de presentación puro: recibe el paper por props
-// y solo lo dibuja. Reutilizable en resultados, favoritos o detalle.
-// Al hacer click en el título avisa al padre con onSelect(id) para abrir el detalle.
-export function PaperCard({ paper, onSelect }) {
+// y solo lo dibuja. Se reutiliza igual en resultados de búsqueda y en favoritos.
+// Avisa al padre con onSelect(id) (abrir detalle) y onToggleFavorite(paper) (⭐).
+export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
   const authors = formatAuthors(paper.authors);
+  const saved = isFavorite(paper.id);
 
   return (
     <article className="paper-card">
@@ -21,6 +22,15 @@ export function PaperCard({ paper, onSelect }) {
             Acceso abierto
           </span>
         )}
+        <button
+          className={saved ? "paper-card__fav paper-card__fav--active" : "paper-card__fav"}
+          type="button"
+          onClick={() => onToggleFavorite(paper)}
+          title={saved ? "Quitar de favoritos" : "Guardar en favoritos"}
+          aria-label={saved ? "Quitar de favoritos" : "Guardar en favoritos"}
+        >
+          {saved ? "⭐" : "☆"}
+        </button>
       </header>
 
       <p className="paper-card__meta">
