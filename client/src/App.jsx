@@ -9,7 +9,7 @@ import "./App.css";
 // Componente principal: compone la página y decide QUÉ mostrar según el estado.
 // La lógica de búsqueda vive en el hook; aquí solo coordinamos la vista.
 export default function App() {
-  const { results, total, status, error, search } = usePaperSearch();
+  const { results, total, yearRange, status, error, search } = usePaperSearch();
   const [selectedPaperId, setSelectedPaperId] = useState(null);
 
   return (
@@ -19,7 +19,7 @@ export default function App() {
         <p className="app__subtitle">Busca papers científicos reales</p>
       </header>
 
-      <SearchBar onSearch={search} disabled={status === "loading"} />
+      <SearchBar onSearch={search} disabled={status === "loading"} yearRange={yearRange} />
 
       <main className="app__results">
         {renderResults({ results, total, status, error, onSelectPaper: setSelectedPaperId })}

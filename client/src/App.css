@@ -95,6 +95,12 @@
   cursor: not-allowed;
 }
 
+.search-bar__hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
 /* ── Lista y tarjetas de papers ─────────────────── */
 .paper-list {
   display: flex;
@@ -284,6 +290,46 @@
   border: 1px solid #d8e4fd;
   border-radius: 8px;
   padding: 0.9rem 1rem;
+}
+
+/* ── Caja de citas ──────────────────────────────── */
+.citation-box__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.citation-box__controls select {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.citation-box__controls button {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  cursor: pointer;
+}
+
+.citation-box__controls button:hover {
+  background: var(--color-border);
+}
+
+.citation-box__text {
+  margin: 0;
+  padding: 0.8rem 0.9rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .paper-detail__links {

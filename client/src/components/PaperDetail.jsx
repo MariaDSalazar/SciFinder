@@ -1,5 +1,6 @@
 import { usePaperDetail } from "../hooks/usePaperDetail.js";
 import { StatusMessage } from "./StatusMessage.jsx";
+import { CitationBox } from "./CitationBox.jsx";
 
 // Modal con el detalle completo de un paper, enriquecido por el backend con
 // TLDR (resumen IA) y citas influyentes de Semantic Scholar.
@@ -60,6 +61,11 @@ function PaperDetailContent({ paper }) {
           <p>{paper.abstract}</p>
         </section>
       )}
+
+      <section className="paper-detail__section">
+        <h3>📋 Citar este paper</h3>
+        <CitationBox paper={paper} />
+      </section>
 
       <footer className="paper-detail__links">
         {paper.pdfUrl && (

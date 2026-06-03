@@ -9,6 +9,7 @@ export function usePaperSearch() {
   return {
     results: data?.results ?? [],
     total: data?.total ?? 0,
+    yearRange: data?.yearRange ?? null,
     status,
     error,
     search: run,

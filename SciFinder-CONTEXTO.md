@@ -107,6 +107,11 @@ OpenAlex es la base. Las demás APIs **enriquecen** cada paper (resúmenes con I
 ### 5.2 Detalle del paper (enriquecido)
 - Vista ampliada con: abstract, autores, revista/fuente, año, citas y **enlace al PDF/DOI**.
 - **Enriquecimiento:** TLDR (Semantic Scholar) y, cuando exista, PDF de acceso abierto (CORE).
+- **Citas bibliográficas en varios formatos:** APA 7, MLA 9, Chicago y BibTeX, con botón de copiar.
+
+### 5.2.1 Rango de años inteligente
+- Al buscar, el backend consulta a OpenAlex desde/hasta qué año hay papers del tema (`group_by=publication_year`), filtrando años atípicos (datos mal fechados o futuros).
+- El frontend acota los campos de año a ese rango y muestra la pista "hay papers desde X hasta Y".
 
 ### 5.3 Favoritos (en base de datos)
 - Botón para marcar un paper como favorito.

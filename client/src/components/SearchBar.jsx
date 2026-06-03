@@ -9,11 +9,16 @@ const SORT_OPTIONS = [
 // Caja de búsqueda con filtros (año desde/hasta) y orden.
 // Es un componente "controlado": guarda su propio estado y, al enviar,
 // avisa al padre mediante onSearch(params). No sabe nada de cómo se buscan los datos.
-export function SearchBar({ onSearch, disabled }) {
+// "yearRange" (si existe) acota los años a aquellos donde realmente hay papers.
+export function SearchBar({ onSearch, disabled, yearRange }) {
   const [query, setQuery] = useState("");
   const [fromYear, setFromYear] = useState("");
   const [toYear, setToYear] = useState("");
   const [sort, setSort] = useState("relevance");
+
+  // Límites de los campos de año: el rango real si lo conocemos; si no, uno amplio.
+  const minYear = yearRange?.from ?? 1500;
+  const maxYear = yearRange?.to ?? new Date().getFullYear();
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -43,9 +48,9 @@ export function SearchBar({ onSearch, disabled }) {
           Desde
           <input
             type="number"
-            min="1500"
-            max="2100"
-            placeholder="Año"
+            min={minYear}
+            max={maxYear}
+            placeholder={String(minYear)}
             value={fromYear}
             onChange={(event) => setFromYear(event.target.value)}
           />
@@ -55,9 +60,9 @@ export function SearchBar({ onSearch, disabled }) {
           Hasta
           <input
             type="number"
-            min="1500"
-            max="2100"
-            placeholder="Año"
+            min={minYear}
+            max={maxYear}
+            placeholder={String(maxYear)}
             value={toYear}
             onChange={(event) => setToYear(event.target.value)}
           />
@@ -78,6 +83,13 @@ export function SearchBar({ onSearch, disabled }) {
           {disabled ? "Buscando..." : "Buscar"}
         </button>
       </div>
+
+      {yearRange && (
+        <p className="search-bar__hint">
+          📅 Hay papers sobre este tema desde <strong>{yearRange.from}</strong> hasta{" "}
+          <strong>{yearRange.to}</strong>.
+        </p>
+      )}
     </form>
   );
 }
