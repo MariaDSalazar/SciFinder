@@ -15,9 +15,10 @@ const ENGINE_OPTIONS = [
   { value: "all", label: "Todos los motores" },
 ];
 
-// Milisegundos de espera tras cambiar un filtro antes de re-buscar solo
-// (evita disparar una búsqueda por cada dígito al escribir un año).
-const AUTO_SEARCH_DELAY = 600;
+// Milisegundos de espera tras cambiar un filtro antes de re-buscar solo.
+// Evita disparar una búsqueda por cada dígito al escribir un año, y respeta
+// el ritmo de Semantic Scholar (~1 petición/segundo con API key).
+const AUTO_SEARCH_DELAY = 1000;
 
 // Caja de búsqueda con filtros (año desde/hasta), orden y MOTOR de búsqueda.
 // El término (query) y los años viven en el padre — así "búsquedas recientes"

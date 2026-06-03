@@ -17,6 +17,21 @@ function authHeaders() {
   return config.semanticScholar.apiKey ? { "x-api-key": config.semanticScholar.apiKey } : {};
 }
 
+// La key de S2 permite ~1 petición/segundo. Si dos llegan muy seguidas
+// (ej. búsqueda automática al cambiar filtros), la segunda recibe 429.
+// Este wrapper espera un poco y reintenta UNA vez antes de rendirse.
+const RETRY_DELAY_MS = 1100;
+
+async function fetchS2(url) {
+  try {
+    return await fetchJson(url, { headers: authHeaders() });
+  } catch (error) {
+    if (error.externalStatus !== 429) throw error;
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+    return fetchJson(url, { headers: authHeaders() });
+  }
+}
+
 // Enriquece un paper usando su DOI. Es una fuente SECUNDARIA:
 // si Semantic Scholar no tiene el paper, falla o tarda, devolvemos null
 // y el detalle se muestra igual con los datos de OpenAlex. Nunca rompe la vista.
@@ -27,7 +42,7 @@ export async function getEnrichment(doi) {
   const url = `${config.semanticScholar.baseUrl}/graph/v1/paper/DOI:${bareDoi}?fields=${ENRICHMENT_FIELDS}`;
 
   try {
-    const data = await fetchJson(url, { headers: authHeaders() });
+    const data = await fetchS2(url);
     return {
       tldr: data.tldr?.text ?? null,
       influentialCitations: data.influentialCitationCount ?? null,
@@ -56,10 +71,7 @@ export async function searchPapersS2({ query, page, perPage, sort, fromYear, toY
   }
 
   try {
-    const data = await fetchJson(
-      `${config.semanticScholar.baseUrl}/graph/v1/paper/search?${params}`,
-      { headers: authHeaders() },
-    );
+    const data = await fetchS2(`${config.semanticScholar.baseUrl}/graph/v1/paper/search?${params}`);
 
     const results = (data.data ?? []).map(toPaperFromS2).filter((paper) => paper.id !== null);
     if (sort === "citations") {
