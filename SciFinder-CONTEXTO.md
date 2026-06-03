@@ -129,8 +129,8 @@ OpenAlex es la base. Las demás APIs **enriquecen** cada paper (resúmenes con I
 
 > Se construye de lo simple a lo complejo. Cada fase deja algo funcionando. El orden alterna frontend y backend para ver progreso pronto.
 
-- [ ] **Fase 0 — Preparación:** instalar Node.js, crear el frontend con Vite, crear la carpeta del backend, inicializar Git. Definir estructura del repo (`client/` + `server/`).
-- [ ] **Fase 1 — Backend mínimo + API:** levantar Express, crear el endpoint `GET /api/search` que llama a OpenAlex, reconstruye el abstract y devuelve resultados limpios. Probar con el navegador/Postman.
+- [x] **Fase 0 — Preparación:** ✅ Node.js v24 verificado; frontend creado con Vite (React) en `client/`; backend Express en `server/` con endpoint de salud `/api/health`; Git inicializado y subido a GitHub (privado). Estructura `client/` + `server/` lista.
+- [x] **Fase 1 — Backend mínimo + API:** ✅ Arquitectura por capas (routes → controller → service → mapper, con `lib/` y middleware). Endpoint `GET /api/search?q=&page=&perPage=&sort=` que consulta OpenAlex, reconstruye el abstract y devuelve papers limpios. Incluye validación (400), 404 y manejo central de errores. Probado contra OpenAlex real.
 - [ ] **Fase 2 — Frontend conectado:** caja de búsqueda en React que consume NUESTRO `/api/search`. Mostrar resultados en una lista. Filtro por año y orden por citas.
 - [ ] **Fase 3 — Detalle + enriquecimiento:** vista de detalle; el backend agrega el TLDR (Semantic Scholar) y enlace al PDF/DOI.
 - [ ] **Fase 4 — Base de datos + Favoritos:** configurar PostgreSQL + Prisma. Endpoints `POST/GET/DELETE /api/favorites`. Frontend para marcar y listar favoritos. Guardar también historial de búsquedas.
@@ -159,12 +159,17 @@ scifinder/
 │   ├── index.html
 │   └── package.json
 │
-├── server/                  # Backend (Node.js + Express)
+├── server/                  # Backend (Node.js + Express) — arquitectura por capas
 │   ├── src/
-│   │   ├── routes/          # Rutas de la API (search, favorites, etc.)
-│   │   ├── services/        # Lógica para llamar a OpenAlex, S2, OpenCitations, CORE
-│   │   ├── lib/             # Utilidades (reconstruir abstract, caché, cliente Prisma)
-│   │   └── index.js         # Arranque del servidor Express
+│   │   ├── config/          # Configuración central (env.js)
+│   │   ├── routes/          # Define las URLs de la API (qué endpoints existen)
+│   │   ├── controllers/     # Validan la entrada y arman la respuesta
+│   │   ├── services/        # Lógica de negocio: llaman a OpenAlex, S2, etc.
+│   │   ├── mappers/         # Convierten datos crudos externos → forma limpia
+│   │   ├── middleware/      # notFound (404) y errorHandler central
+│   │   ├── lib/             # Utilidades reutilizables (fetchJson, ApiError, abstract)
+│   │   ├── app.js           # Construye/configura Express (sin escuchar)
+│   │   └── index.js         # Arranque del servidor
 │   ├── prisma/
 │   │   └── schema.prisma    # Modelo de datos (favoritos, historial)
 │   ├── .env                 # API keys y conexión a BD (NUNCA se sube a Git)
