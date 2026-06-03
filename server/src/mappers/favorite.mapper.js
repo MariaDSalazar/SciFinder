@@ -1,10 +1,11 @@
 // Conversión entre la forma "paper" (la que usa el frontend) y el registro
-// de la tabla FavoritePaper. SQLite no tiene arrays, así que los autores
-// se guardan como JSON en texto y se convierten aquí, de ida y de vuelta.
+// de la tabla FavoritePaper. Los autores se guardan como JSON en texto y se
+// convierten aquí, de ida y de vuelta. El registro pertenece a UNA sesión.
 
-export function toFavoriteRecord(paper) {
+export function toFavoriteRecord(paper, sessionId) {
   return {
-    id: paper.id,
+    sessionId,
+    paperId: paper.id,
     title: paper.title,
     authors: JSON.stringify(paper.authors ?? []),
     venue: paper.venue ?? null,
@@ -21,7 +22,7 @@ export function toFavoriteRecord(paper) {
 
 export function toPaperFromRecord(record) {
   return {
-    id: record.id,
+    id: record.paperId,
     title: record.title,
     authors: JSON.parse(record.authors),
     venue: record.venue,
@@ -36,6 +37,6 @@ export function toPaperFromRecord(record) {
     savedAt: record.savedAt,
     // Solo los ids de OpenAlex (W...) o por DOI tienen detalle enriquecido;
     // los de ERIC ("eric:...") enlazan a su ficha oficial.
-    hasDetail: !record.id.startsWith("eric:"),
+    hasDetail: !record.paperId.startsWith("eric:"),
   };
 }

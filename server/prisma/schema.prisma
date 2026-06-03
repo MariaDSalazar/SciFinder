@@ -11,11 +11,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Un paper guardado como favorito. Se usa el id corto de OpenAlex como clave
-// primaria (es único y estable). "authors" se guarda como JSON en texto
-// porque SQLite no tiene arrays; el mapper lo convierte de ida y vuelta.
+// Un paper guardado como favorito por UNA sesión anónima de navegador.
+// La pareja (sessionId, paperId) es única: cada visitante tiene sus propios
+// favoritos y dos visitantes pueden guardar el mismo paper sin chocarse.
+// "authors" se guarda como JSON en texto; el mapper lo convierte de ida y vuelta.
 model FavoritePaper {
-  id           String   @id
+  recordId     Int      @id @default(autoincrement())
+  sessionId    String
+  paperId      String
   title        String
   authors      String
   venue        String?
@@ -28,12 +31,15 @@ model FavoritePaper {
   abstract     String?
   topic        String?
   savedAt      DateTime @default(now())
+
+  @@unique([sessionId, paperId])
 }
 
-// Registro de cada búsqueda realizada (para "búsquedas recientes" y, más
-// adelante, estadísticas de uso).
+// Registro de cada búsqueda realizada POR SESIÓN (para "búsquedas recientes"
+// privadas de cada visitante).
 model SearchHistory {
   id        Int      @id @default(autoincrement())
+  sessionId String
   query     String
   total     Int
   createdAt DateTime @default(now())

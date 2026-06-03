@@ -1,5 +1,6 @@
 import { ApiError } from "../lib/ApiError.js";
 import { cached, TTL } from "../lib/cache.js";
+import { optionalSessionId } from "../lib/session.js";
 import { searchPapers } from "../services/search.service.js";
 import { recordSearch } from "../services/history.service.js";
 
@@ -50,9 +51,13 @@ export async function handleSearch(req, res, next) {
       () => searchPapers(params),
     );
 
-    // El historial se guarda "en segundo plano": si fallara,
-    // no debe afectar la respuesta de la búsqueda.
-    recordSearch({ query: params.query, total: data.total }).catch(() => {});
+    // El historial se guarda "en segundo plano" y POR SESIÓN: si no llega
+    // sesión (ej. llamadas directas a la API) simplemente no se registra,
+    // y si fallara, no afecta la respuesta de la búsqueda.
+    const sessionId = optionalSessionId(req);
+    if (sessionId) {
+      recordSearch({ query: params.query, total: data.total, sessionId }).catch(() => {});
+    }
 
     res.set("X-Cache", hit ? "HIT" : "MISS");
     res.json(data);

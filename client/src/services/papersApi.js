@@ -1,12 +1,17 @@
 import { API_BASE_URL } from "../config.js";
+import { getSessionId } from "../lib/session.js";
 
 // Helper interno reutilizado por todas las llamadas al backend:
-// hace el fetch (GET o POST con JSON), parsea la respuesta
+// hace el fetch (GET o POST con JSON), adjunta el id de sesión anónimo
+// (favoritos e historial privados por navegador), parsea la respuesta
 // y convierte errores en mensajes legibles.
 async function requestJson(path, { method = "GET", body } = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method,
-    headers: body ? { "Content-Type": "application/json" } : undefined,
+    headers: {
+      "X-Session-Id": getSessionId(),
+      ...(body && { "Content-Type": "application/json" }),
+    },
     body: body ? JSON.stringify(body) : undefined,
   });
   const data = await response.json().catch(() => null);
