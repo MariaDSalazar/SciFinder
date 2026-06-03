@@ -15,6 +15,7 @@ export function toFavoriteRecord(paper) {
     landingUrl: paper.landingUrl ?? null,
     isOpenAccess: paper.isOpenAccess ?? false,
     abstract: paper.abstract ?? null,
+    topic: paper.topic ?? null,
   };
 }
 
@@ -31,6 +32,7 @@ export function toPaperFromRecord(record) {
     landingUrl: record.landingUrl,
     isOpenAccess: record.isOpenAccess,
     abstract: record.abstract,
+    topic: record.topic,
     savedAt: record.savedAt,
   };
 }

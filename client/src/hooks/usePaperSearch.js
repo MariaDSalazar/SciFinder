@@ -10,6 +10,7 @@ export function usePaperSearch() {
     results: data?.results ?? [],
     total: data?.total ?? 0,
     yearRange: data?.yearRange ?? null,
+    byYear: data?.byYear ?? [],
     status,
     error,
     search: run,

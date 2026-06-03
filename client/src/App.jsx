@@ -5,6 +5,7 @@ import { PaperDetail } from "./components/PaperDetail.jsx";
 import { StatusMessage } from "./components/StatusMessage.jsx";
 import { RecentSearches } from "./components/RecentSearches.jsx";
 import { FavoritesView } from "./components/FavoritesView.jsx";
+import { ResultsCharts } from "./components/ResultsCharts.jsx";
 import { usePaperSearch } from "./hooks/usePaperSearch.js";
 import { useFavorites } from "./hooks/useFavorites.js";
 import "./App.css";
@@ -12,7 +13,7 @@ import "./App.css";
 // Componente principal: compone la página y decide QUÉ mostrar según el estado.
 // La lógica de búsqueda y favoritos vive en hooks; aquí solo coordinamos la vista.
 export default function App() {
-  const { results, total, yearRange, status, error, search } = usePaperSearch();
+  const { results, total, yearRange, byYear, status, error, search } = usePaperSearch();
   const favoritesState = useFavorites();
   const [query, setQuery] = useState("");
   const [selectedPaperId, setSelectedPaperId] = useState(null);
@@ -22,6 +23,11 @@ export default function App() {
   function handlePickRecent(recentQuery) {
     setQuery(recentQuery);
     search({ query: recentQuery });
+  }
+
+  // Al guardar desde los resultados, el favorito se etiqueta con el tema buscado.
+  function handleToggleFavorite(paper) {
+    favoritesState.toggleFavorite(paper, query.trim());
   }
 
   return (
@@ -62,9 +68,11 @@ export default function App() {
             {renderResults({
               results,
               total,
+              byYear,
               status,
               error,
-              favoritesState,
+              isFavorite: favoritesState.isFavorite,
+              onToggleFavorite: handleToggleFavorite,
               onSelectPaper: setSelectedPaperId,
             })}
           </main>
@@ -84,7 +92,16 @@ export default function App() {
 
 // Elige el contenido según el estado de la búsqueda. Separar esta decisión
 // mantiene el JSX del componente principal limpio y fácil de leer.
-function renderResults({ results, total, status, error, favoritesState, onSelectPaper }) {
+function renderResults({
+  results,
+  total,
+  byYear,
+  status,
+  error,
+  isFavorite,
+  onToggleFavorite,
+  onSelectPaper,
+}) {
   if (status === "idle") {
     return <StatusMessage icon="🔎">Escribe un tema y presiona “Buscar” para empezar.</StatusMessage>;
   }
@@ -101,11 +118,12 @@ function renderResults({ results, total, status, error, favoritesState, onSelect
   return (
     <>
       <p className="app__count">{total.toLocaleString("es")} resultados encontrados</p>
+      <ResultsCharts byYear={byYear} results={results} />
       <PaperList
         papers={results}
         onSelectPaper={onSelectPaper}
-        isFavorite={favoritesState.isFavorite}
-        onToggleFavorite={favoritesState.toggleFavorite}
+        isFavorite={isFavorite}
+        onToggleFavorite={onToggleFavorite}
       />
     </>
   );

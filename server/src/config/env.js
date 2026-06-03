@@ -13,4 +13,7 @@ export const config = {
   translate: {
     baseUrl: "https://translate.googleapis.com",
   },
+  openCitations: {
+    baseUrl: "https://api.opencitations.net/index/v2",
+  },
 };

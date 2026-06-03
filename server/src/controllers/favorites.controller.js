@@ -22,7 +22,13 @@ export async function handleSaveFavorite(req, res, next) {
       throw new ApiError(400, "El campo 'title' es obligatorio");
     }
 
-    const saved = await saveFavorite(paper);
+    // El tema es opcional: se limpia y se acota para guardarlo sano.
+    const topic =
+      typeof paper.topic === "string" && paper.topic.trim().length > 0
+        ? paper.topic.trim().slice(0, 120)
+        : null;
+
+    const saved = await saveFavorite({ ...paper, topic });
     res.status(201).json(saved);
   } catch (error) {
     next(error);

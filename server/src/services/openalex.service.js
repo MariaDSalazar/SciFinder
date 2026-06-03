@@ -42,11 +42,11 @@ export async function searchPapers({ query, page, perPage, sort, fromYear, toYea
 
   const url = `${config.openAlex.baseUrl}/works?${params}`;
 
-  // La búsqueda y el rango de años van en paralelo (no se suman las esperas).
-  // El rango es secundario: si falla, la búsqueda sale igual (yearRange: null).
-  const [data, yearRange] = await Promise.all([
+  // La búsqueda y las estadísticas por año van en paralelo (no se suman las
+  // esperas). Son secundarias: si fallan, la búsqueda sale igual.
+  const [data, yearStats] = await Promise.all([
     fetchJson(url),
-    getYearRange(query).catch(() => null),
+    getYearStats(query).catch(() => null),
   ]);
 
   return {
@@ -54,17 +54,19 @@ export async function searchPapers({ query, page, perPage, sort, fromYear, toYea
     total: data.meta?.count ?? 0,
     page,
     perPage,
-    yearRange,
+    yearRange: yearStats ? { from: yearStats.from, to: yearStats.to } : null,
+    byYear: yearStats?.byYear ?? [],
   };
 }
 
-// Calcula desde/hasta qué año existen papers para una búsqueda,
-// usando la agregación por año de OpenAlex (group_by=publication_year).
+// Estadísticas por año para una búsqueda, usando la agregación de OpenAlex
+// (group_by=publication_year). Devuelve el rango {from, to} y la serie
+// byYear [{year, count}] para graficar la producción del tema.
 // OpenAlex trae registros mal fechados (ej. un paper de "1403" sobre machine
 // learning, o años futuros de artículos "in press"); para no mostrar rangos
 // absurdos, se descartan los años futuros y los que tienen una cantidad
 // insignificante de papers (< 0.01% del total).
-async function getYearRange(query) {
+async function getYearStats(query) {
   const params = new URLSearchParams({ search: query, group_by: "publication_year" });
   const data = await fetchJson(`${config.openAlex.baseUrl}/works?${params}`);
 
@@ -76,12 +78,16 @@ async function getYearRange(query) {
   const minCount = Math.max(1, Math.ceil(totalPapers * 0.0001));
   const currentYear = new Date().getFullYear();
 
-  const years = groups
+  const byYear = groups
     .filter((group) => group.count >= minCount && group.year <= currentYear)
-    .map((group) => group.year);
+    .sort((a, b) => a.year - b.year);
 
-  if (years.length === 0) return null;
-  return { from: Math.min(...years), to: Math.max(...years) };
+  if (byYear.length === 0) return null;
+  return {
+    from: byYear[0].year,
+    to: byYear[byYear.length - 1].year,
+    byYear,
+  };
 }
 
 // Obtiene UN paper por su id corto de OpenAlex (ej. "W2741809807").

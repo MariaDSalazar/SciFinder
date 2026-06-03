@@ -26,6 +26,7 @@ model FavoritePaper {
   landingUrl   String?
   isOpenAccess Boolean  @default(false)
   abstract     String?
+  topic        String?
   savedAt      DateTime @default(now())
 }
 

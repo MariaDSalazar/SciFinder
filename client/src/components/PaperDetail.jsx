@@ -41,10 +41,20 @@ function PaperDetailContent({ paper }) {
       )}
 
       <div className="paper-detail__stats">
-        <span>📊 {paper.citations.toLocaleString("es")} citas</span>
+        <span title="Total de citas según OpenAlex">📊 {paper.citations.toLocaleString("es")} citas</span>
         {paper.influentialCitations !== null && (
           <span title="Citas que influyeron de forma significativa en otros trabajos (Semantic Scholar)">
             ⭐ {paper.influentialCitations.toLocaleString("es")} citas influyentes
+          </span>
+        )}
+        {paper.openCitations?.citationCount !== null && paper.openCitations && (
+          <span title="Citas registradas en el índice abierto de OpenCitations">
+            🔓 {paper.openCitations.citationCount.toLocaleString("es")} citas abiertas
+          </span>
+        )}
+        {paper.openCitations?.referenceCount !== null && paper.openCitations && (
+          <span title="A cuántos trabajos cita este paper (OpenCitations)">
+            📚 {paper.openCitations.referenceCount.toLocaleString("es")} referencias
           </span>
         )}
       </div>
@@ -71,7 +81,7 @@ function PaperDetailContent({ paper }) {
       <footer className="paper-detail__links">
         {paper.pdfUrl && (
           <a href={paper.pdfUrl} target="_blank" rel="noreferrer">
-            📄 Ver PDF
+            📄 Ver PDF{paper.pdfSource ? ` (vía ${paper.pdfSource})` : ""}
           </a>
         )}
         {paper.landingUrl && (
@@ -80,6 +90,14 @@ function PaperDetailContent({ paper }) {
           </a>
         )}
       </footer>
+
+      {paper.sources && (
+        <p className="paper-detail__sources">
+          Fuentes de datos: OpenAlex {paper.sources.openAlex ? "✓" : "—"} · Semantic Scholar{" "}
+          {paper.sources.semanticScholar ? "✓" : "—"} · OpenCitations{" "}
+          {paper.sources.openCitations ? "✓" : "—"}
+        </p>
+      )}
     </article>
   );
 }

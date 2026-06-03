@@ -46,8 +46,13 @@ export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
           {paper.citations.toLocaleString("es")} citas
         </span>
         {paper.pdfUrl && (
-          <a href={paper.pdfUrl} target="_blank" rel="noreferrer">
-            📄 PDF
+          <a
+            href={paper.pdfUrl}
+            target="_blank"
+            rel="noreferrer"
+            title={paper.pdfSource ? `PDF alojado en ${paper.pdfSource}` : "PDF de acceso abierto"}
+          >
+            📄 PDF{paper.pdfSource ? ` · ${paper.pdfSource}` : ""}
           </a>
         )}
         {paper.landingUrl && (

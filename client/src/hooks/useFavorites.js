@@ -16,14 +16,15 @@ export function useFavorites() {
   // Set de ids para consultar "¿es favorito?" sin recorrer la lista cada vez.
   const favoriteIds = useMemo(() => new Set(favorites.map((paper) => paper.id)), [favorites]);
 
-  async function toggleFavorite(paper) {
+  // "topic" es el tema/búsqueda con el que se guardó (para agrupar favoritos).
+  async function toggleFavorite(paper, topic) {
     setError(null);
     try {
       if (favoriteIds.has(paper.id)) {
         await removeFavorite(paper.id);
         setFavorites((previous) => previous.filter((item) => item.id !== paper.id));
       } else {
-        const saved = await addFavorite(paper);
+        const saved = await addFavorite({ ...paper, topic: topic || null });
         setFavorites((previous) => [saved, ...previous]);
       }
     } catch (err) {
