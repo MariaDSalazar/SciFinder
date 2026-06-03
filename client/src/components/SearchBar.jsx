@@ -20,11 +20,20 @@ const ENGINE_OPTIONS = [
 const AUTO_SEARCH_DELAY = 600;
 
 // Caja de búsqueda con filtros (año desde/hasta), orden y MOTOR de búsqueda.
-// El término (query) vive en el padre — así "búsquedas recientes" puede llenarlo.
+// El término (query) y los años viven en el padre — así "búsquedas recientes"
+// puede llenar el campo y el click en la gráfica puede fijar el año.
 // Al cambiar cualquier filtro con un tema ya escrito, re-busca automáticamente.
-export function SearchBar({ query, onQueryChange, onSearch, disabled, yearRange }) {
-  const [fromYear, setFromYear] = useState("");
-  const [toYear, setToYear] = useState("");
+export function SearchBar({
+  query,
+  onQueryChange,
+  fromYear,
+  onFromYearChange,
+  toYear,
+  onToYearChange,
+  onSearch,
+  disabled,
+  yearRange,
+}) {
   const [sort, setSort] = useState("relevance");
   const [engine, setEngine] = useState("openalex");
 
@@ -83,7 +92,7 @@ export function SearchBar({ query, onQueryChange, onSearch, disabled, yearRange 
             max={maxYear}
             placeholder={String(minYear)}
             value={fromYear}
-            onChange={(event) => setFromYear(event.target.value)}
+            onChange={(event) => onFromYearChange(event.target.value)}
           />
         </label>
 
@@ -95,7 +104,7 @@ export function SearchBar({ query, onQueryChange, onSearch, disabled, yearRange 
             max={maxYear}
             placeholder={String(maxYear)}
             value={toYear}
-            onChange={(event) => setToYear(event.target.value)}
+            onChange={(event) => onToYearChange(event.target.value)}
           />
         </label>
 

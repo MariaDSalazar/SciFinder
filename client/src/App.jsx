@@ -16,6 +16,8 @@ export default function App() {
   const { results, total, totals, yearRange, byYear, status, error, search } = usePaperSearch();
   const favoritesState = useFavorites();
   const [query, setQuery] = useState("");
+  const [fromYear, setFromYear] = useState("");
+  const [toYear, setToYear] = useState("");
   const [selectedPaperId, setSelectedPaperId] = useState(null);
   const [view, setView] = useState("search");
 
@@ -28,6 +30,13 @@ export default function App() {
   // Al guardar desde los resultados, el favorito se etiqueta con el tema buscado.
   function handleToggleFavorite(paper) {
     favoritesState.toggleFavorite(paper, query.trim());
+  }
+
+  // Click en una barra de la gráfica: fija ese año en Desde/Hasta.
+  // La re-búsqueda automática del SearchBar hace el resto.
+  function handleYearClick(year) {
+    setFromYear(String(year));
+    setToYear(String(year));
   }
 
   return (
@@ -59,6 +68,10 @@ export default function App() {
           <SearchBar
             query={query}
             onQueryChange={setQuery}
+            fromYear={fromYear}
+            onFromYearChange={setFromYear}
+            toYear={toYear}
+            onToYearChange={setToYear}
             onSearch={search}
             disabled={status === "loading"}
             yearRange={yearRange}
@@ -75,6 +88,7 @@ export default function App() {
               isFavorite: favoritesState.isFavorite,
               onToggleFavorite: handleToggleFavorite,
               onSelectPaper: setSelectedPaperId,
+              onYearClick: handleYearClick,
             })}
           </main>
         </>
@@ -123,6 +137,7 @@ function renderResults({
   isFavorite,
   onToggleFavorite,
   onSelectPaper,
+  onYearClick,
 }) {
   if (status === "idle") {
     return <StatusMessage icon="🔎">Escribe un tema y presiona “Buscar” para empezar.</StatusMessage>;
@@ -142,7 +157,7 @@ function renderResults({
       <p className="app__count">
         {total.toLocaleString("es")} resultados encontrados{formatTotalsBreakdown(totals)}
       </p>
-      <ResultsCharts byYear={byYear} results={results} />
+      <ResultsCharts byYear={byYear} results={results} onYearClick={onYearClick} />
       <PaperList
         papers={results}
         onSelectPaper={onSelectPaper}

@@ -10,8 +10,9 @@ import {
 
 // Gráficas de los resultados:
 //  1) Producción por año del TEMA COMPLETO (agregación de OpenAlex, no solo la página)
+//     → click en una barra fija ese año como filtro (onYearClick).
 //  2) Los papers más citados de la página actual
-export function ResultsCharts({ byYear, results }) {
+export function ResultsCharts({ byYear, results, onYearClick }) {
   const topCited = [...results]
     .sort((a, b) => b.citations - a.citations)
     .slice(0, 8)
@@ -25,7 +26,14 @@ export function ResultsCharts({ byYear, results }) {
         <div className="charts__panel">
           <h3>📈 Papers por año (tema completo)</h3>
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={byYear}>
+            <BarChart
+              data={byYear}
+              style={{ cursor: "pointer" }}
+              onClick={(state) => {
+                // activeLabel es el valor del eje X (el año) de la barra clickeada.
+                if (state?.activeLabel != null) onYearClick(state.activeLabel);
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="year" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} />
@@ -33,6 +41,7 @@ export function ResultsCharts({ byYear, results }) {
               <Bar dataKey="count" name="papers" fill="#2f6df6" />
             </BarChart>
           </ResponsiveContainer>
+          <p className="charts__hint">💡 Haz click en una barra para ver solo ese año.</p>
         </div>
       )}
 
