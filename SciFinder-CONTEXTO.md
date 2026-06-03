@@ -189,7 +189,6 @@ scifinder/
 │   ├── .env.example         # Plantilla de variables (sí se sube)
 │   └── package.json
 │
-├── .gitignore               # ignora node_modules, .env, etc.
 └── README.md
 ```
 
@@ -235,14 +234,13 @@ scifinder/
 
 SciFinder es un **repositorio Git independiente** (su propio `.git` dentro de la carpeta del proyecto). **No** forma parte del repo de `D:\Cursos` — así, a GitHub solo sube SciFinder y nada más (ni cursos, ni certificados, ni el portafolio).
 
-### Qué NUNCA se sube (lo protege el `.gitignore`)
+### Qué NUNCA se sube (lo protegen reglas de exclusión locales de Git)
 - `.env` y cualquier `.env.*` → **API keys y conexión a la base de datos**. Si una key se sube a GitHub, queda pública. ⚠️
-- `.claude/` → configuración local de Claude Code.
 - `node_modules/` → dependencias (se reinstalan con `npm install`).
-- `dist/`, `build/`, logs, archivos de BD local (`*.sqlite`/`*.db`) y archivos del sistema.
+- `dist/`, `build/`, logs, archivos de BD local (`*.sqlite`/`*.db`), configuraciones locales de herramientas y archivos del sistema.
 
 ### Qué SÍ se sube
-- El código (`client/` y `server/`), el `.gitignore`, este documento y **`server/.env.example`** (plantilla **sin** valores reales, sirve de guía).
+- El código (`client/` y `server/`), este documento y **`server/.env.example`** (plantilla **sin** valores reales, sirve de guía).
 
 ### Regla de oro
 > Las keys reales viven solo en tu `.env` local (y en las variables de entorno del servicio donde despliegues). El `.env.example` documenta **qué** variables existen, nunca **sus valores**.
