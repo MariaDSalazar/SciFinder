@@ -36,6 +36,9 @@
 | ![Pantalla principal con búsquedas recientes](docs/pantalla-principal.png) | ![Favoritos agrupados por tema de búsqueda](docs/favoritos.png) |
 | Filtros de año, orden y motor, con búsquedas recientes de la sesión. | Los papers guardados se agrupan por el tema con el que se buscaron. |
 
+![Estado vacío de favoritos con mensaje orientativo](docs/favoritos-vacio.png)
+*Cada vista cuida sus estados vacíos: favoritos sin papers guía al usuario a marcar la estrella ☆.*
+
 ---
 
 ## 🏗️ Arquitectura
