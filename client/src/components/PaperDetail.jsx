@@ -1,6 +1,7 @@
 import { usePaperDetail } from "../hooks/usePaperDetail.js";
 import { StatusMessage } from "./StatusMessage.jsx";
 import { CitationBox } from "./CitationBox.jsx";
+import { TranslatableText } from "./TranslatableText.jsx";
 
 // Modal con el detalle completo de un paper, enriquecido por el backend con
 // TLDR (resumen IA) y citas influyentes de Semantic Scholar.
@@ -51,14 +52,14 @@ function PaperDetailContent({ paper }) {
       {paper.tldr && (
         <section className="paper-detail__section paper-detail__tldr">
           <h3>🤖 Resumen IA (TLDR)</h3>
-          <p>{paper.tldr}</p>
+          <TranslatableText text={paper.tldr} />
         </section>
       )}
 
       {paper.abstract && (
         <section className="paper-detail__section">
           <h3>Abstract</h3>
-          <p>{paper.abstract}</p>
+          <TranslatableText text={paper.abstract} />
         </section>
       )}
 

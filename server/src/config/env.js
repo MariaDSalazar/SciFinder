@@ -10,4 +10,7 @@ export const config = {
     // Opcional: sin key funciona (cupo compartido); con key hay cupo propio.
     apiKey: process.env.SEMANTIC_SCHOLAR_API_KEY || null,
   },
+  translate: {
+    baseUrl: "https://translate.googleapis.com",
+  },
 };
