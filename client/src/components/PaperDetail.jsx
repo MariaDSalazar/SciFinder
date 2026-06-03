@@ -1,13 +1,23 @@
+import { useEffect } from "react";
 import { usePaperDetail } from "../hooks/usePaperDetail.js";
 import { StatusMessage } from "./StatusMessage.jsx";
 import { CitationBox } from "./CitationBox.jsx";
 import { TranslatableText } from "./TranslatableText.jsx";
 
 // Modal con el detalle completo de un paper, enriquecido por el backend con
-// TLDR (resumen IA) y citas influyentes de Semantic Scholar.
-// Se cierra con el botón ✕ o haciendo click fuera del recuadro.
+// TLDR (resumen IA), citas influyentes (S2), citas abiertas (OpenCitations)
+// y PDF rescatado por CORE. Se cierra con ✕, click fuera o la tecla Esc.
 export function PaperDetail({ paperId, onClose }) {
   const { paper, status, error } = usePaperDetail(paperId);
+
+  // Cerrar con la tecla Escape (se limpia el listener al cerrar el modal).
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   return (
     <div className="modal" onClick={onClose} role="presentation">
@@ -16,7 +26,7 @@ export function PaperDetail({ paperId, onClose }) {
           ✕
         </button>
 
-        {status === "loading" && <StatusMessage icon="⏳">Cargando detalle...</StatusMessage>}
+        {status === "loading" && <StatusMessage spinner>Cargando detalle...</StatusMessage>}
         {status === "error" && <StatusMessage icon="⚠️">{error}</StatusMessage>}
         {status === "success" && paper && <PaperDetailContent paper={paper} />}
       </div>

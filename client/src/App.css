@@ -350,6 +350,58 @@
   margin-bottom: 0.5rem;
 }
 
+/* Spinner animado para los estados de carga. */
+.status-message__spinner {
+  display: inline-block;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin-bottom: 0.6rem;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Botón "Cargar más resultados" ──────────────── */
+.app__load-more {
+  display: block;
+  margin: 1.25rem auto 0;
+  padding: 0.6rem 1.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.app__load-more:hover:not(:disabled) {
+  background: #eef4ff;
+}
+
+.app__load-more:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ── Pie de página ──────────────────────────────── */
+.app__footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+}
+
 /* ── Modal de detalle ───────────────────────────── */
 .modal {
   position: fixed;
@@ -544,8 +596,39 @@
 
 /* ── Responsive ─────────────────────────────────── */
 @media (max-width: 560px) {
+  .app {
+    padding: 1rem 0.75rem 3rem;
+  }
+
+  .app__title {
+    font-size: 1.7rem;
+  }
+
   .search-bar__submit {
     margin-left: 0;
     width: 100%;
+  }
+
+  .search-bar__field {
+    flex: 1 1 40%;
+  }
+
+  .search-bar__field input[type="number"],
+  .search-bar__field select {
+    width: 100%;
+  }
+
+  /* El modal aprovecha casi toda la pantalla en el celular. */
+  .modal {
+    padding: 0.5rem;
+  }
+
+  .modal__content {
+    padding: 1.25rem 1rem;
+    max-height: 92vh;
+  }
+
+  .paper-card__footer {
+    gap: 0.6rem;
   }
 }

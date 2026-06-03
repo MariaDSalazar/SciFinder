@@ -13,7 +13,19 @@ import "./App.css";
 // Componente principal: compone la página y decide QUÉ mostrar según el estado.
 // La lógica de búsqueda y favoritos vive en hooks; aquí solo coordinamos la vista.
 export default function App() {
-  const { results, total, totals, yearRange, byYear, status, error, search } = usePaperSearch();
+  const {
+    results,
+    total,
+    totals,
+    yearRange,
+    byYear,
+    status,
+    error,
+    loadingMore,
+    hasMore,
+    search,
+    loadMore,
+  } = usePaperSearch();
   const favoritesState = useFavorites();
   const [query, setQuery] = useState("");
   const [fromYear, setFromYear] = useState("");
@@ -89,6 +101,9 @@ export default function App() {
               onToggleFavorite: handleToggleFavorite,
               onSelectPaper: setSelectedPaperId,
               onYearClick: handleYearClick,
+              hasMore,
+              loadingMore,
+              onLoadMore: loadMore,
             })}
           </main>
         </>
@@ -101,6 +116,11 @@ export default function App() {
       {selectedPaperId && (
         <PaperDetail paperId={selectedPaperId} onClose={() => setSelectedPaperId(null)} />
       )}
+
+      <footer className="app__footer">
+        Hecho con 💜 por Maria del Carmen Salazar Torres · Datos: OpenAlex · Semantic Scholar ·
+        Crossref · Europe PMC · ERIC · OpenCitations · CORE
+      </footer>
     </div>
   );
 }
@@ -138,12 +158,15 @@ function renderResults({
   onToggleFavorite,
   onSelectPaper,
   onYearClick,
+  hasMore,
+  loadingMore,
+  onLoadMore,
 }) {
   if (status === "idle") {
     return <StatusMessage icon="🔎">Escribe un tema y presiona “Buscar” para empezar.</StatusMessage>;
   }
   if (status === "loading") {
-    return <StatusMessage icon="⏳">Buscando papers...</StatusMessage>;
+    return <StatusMessage spinner>Buscando papers...</StatusMessage>;
   }
   if (status === "error") {
     return <StatusMessage icon="⚠️">{error}</StatusMessage>;
@@ -164,6 +187,16 @@ function renderResults({
         isFavorite={isFavorite}
         onToggleFavorite={onToggleFavorite}
       />
+      {hasMore && (
+        <button
+          className="app__load-more"
+          type="button"
+          onClick={onLoadMore}
+          disabled={loadingMore}
+        >
+          {loadingMore ? "Cargando..." : "⬇️ Cargar más resultados"}
+        </button>
+      )}
     </>
   );
 }
