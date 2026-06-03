@@ -147,3 +147,7 @@ npm run dev          # → http://localhost:5173
 **Maria del Carmen Salazar Torres**
 
 Proyecto de portafolio full-stack: consumo y orquestación de múltiples APIs públicas, diseño de API REST propia, modelado de datos, caché, tolerancia a fallos, CI/CD y despliegue en producción.
+
+## 📄 Licencia
+
+Distribuido bajo la **Licencia MIT** — uso libre y gratuito, conservando el aviso de autoría. Ver [LICENSE](LICENSE).
