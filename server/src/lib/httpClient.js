@@ -1,17 +1,23 @@
 import { ApiError } from "./ApiError.js";
 
 // Cliente HTTP reutilizable sobre fetch.
-// Hace un GET, espera JSON y traduce cualquier fallo de red a un ApiError claro.
-// Acepta cabeceras extra (ej. la API key de Semantic Scholar).
+// Hace GET (o POST con cuerpo JSON), espera JSON y traduce cualquier fallo de
+// red a un ApiError claro. Acepta cabeceras extra (ej. API keys).
 // Si la fuente responde con error, expone "externalStatus" para que el servicio
 // que llama pueda traducirlo (ej. 404 externo → "paper no encontrado").
-export async function fetchJson(url, { timeoutMs = 10000, headers = {} } = {}) {
+export async function fetchJson(url, { timeoutMs = 10000, headers = {}, method = "GET", body } = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const response = await fetch(url, {
-      headers: { Accept: "application/json", ...headers },
+      method,
+      headers: {
+        Accept: "application/json",
+        ...(body !== undefined && { "Content-Type": "application/json" }),
+        ...headers,
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
       signal: controller.signal,
     });
 

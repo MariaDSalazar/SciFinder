@@ -4,6 +4,7 @@ import { isPaperId } from "../lib/validation.js";
 import { getPaperById } from "../services/openalex.service.js";
 import { getEnrichment } from "../services/semanticscholar.service.js";
 import { getOpenCitationsStats } from "../services/opencitations.service.js";
+import { findOpenAccessPdf } from "../services/core.service.js";
 
 // GET /api/papers/:id — detalle de un paper:
 // OpenAlex aporta los datos base; Semantic Scholar lo enriquece (TLDR + citas
@@ -20,15 +21,19 @@ export async function handleGetPaper(req, res, next) {
     const { value: payload, hit } = await cached(`paper:${id}`, TTL.detail, async () => {
       const paper = await getPaperById(id);
 
-      // Los dos enriquecimientos van en paralelo (no se suman las esperas)
-      // y son opcionales: si alguno falla, sus campos van en null.
-      const [enrichment, openCitations] = await Promise.all([
+      // Los enriquecimientos van en paralelo (no se suman las esperas) y son
+      // opcionales: si alguno falla, sus campos van en null. CORE solo se
+      // consulta cuando el paper NO trae PDF (cuida el cupo diario de la key).
+      const [enrichment, openCitations, corePdf] = await Promise.all([
         getEnrichment(paper.doi),
         getOpenCitationsStats(paper.doi),
+        paper.pdfUrl ? Promise.resolve(null) : findOpenAccessPdf(paper.doi),
       ]);
 
       return {
         ...paper,
+        pdfUrl: paper.pdfUrl ?? corePdf,
+        pdfSource: paper.pdfUrl ? paper.pdfSource : corePdf ? "CORE" : null,
         tldr: enrichment?.tldr ?? null,
         influentialCitations: enrichment?.influentialCitations ?? null,
         openCitations,
@@ -37,6 +42,7 @@ export async function handleGetPaper(req, res, next) {
           openAlex: true,
           semanticScholar: enrichment !== null,
           openCitations: openCitations !== null,
+          core: corePdf !== null,
         },
       };
     });

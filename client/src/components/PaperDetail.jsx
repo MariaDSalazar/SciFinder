@@ -95,7 +95,8 @@ function PaperDetailContent({ paper }) {
         <p className="paper-detail__sources">
           Fuentes de datos: OpenAlex {paper.sources.openAlex ? "✓" : "—"} · Semantic Scholar{" "}
           {paper.sources.semanticScholar ? "✓" : "—"} · OpenCitations{" "}
-          {paper.sources.openCitations ? "✓" : "—"}
+          {paper.sources.openCitations ? "✓" : "—"} · CORE{" "}
+          {paper.sources.core ? "✓ (PDF)" : "—"}
         </p>
       )}
     </article>

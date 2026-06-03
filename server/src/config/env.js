@@ -25,4 +25,9 @@ export const config = {
   eric: {
     baseUrl: "https://api.ies.ed.gov/eric",
   },
+  core: {
+    baseUrl: "https://api.core.ac.uk/v3",
+    // La key vive en el .env del servidor; el navegador jamás la ve.
+    apiKey: process.env.CORE_API_KEY || null,
+  },
 };
