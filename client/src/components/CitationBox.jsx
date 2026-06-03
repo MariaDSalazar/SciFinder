@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Check, Copy } from "lucide-react";
 import { CITATION_FORMATS } from "../lib/citations.js";
 
 // Caja de citas: deja elegir el formato (APA, MLA, Chicago, BibTeX),
@@ -32,7 +33,15 @@ export function CitationBox({ paper }) {
         </select>
 
         <button type="button" onClick={handleCopy}>
-          {copied ? "✅ ¡Copiada!" : "📋 Copiar"}
+          {copied ? (
+            <>
+              <Check size={14} aria-hidden="true" /> ¡Copiada!
+            </>
+          ) : (
+            <>
+              <Copy size={14} aria-hidden="true" /> Copiar
+            </>
+          )}
         </button>
       </div>
 

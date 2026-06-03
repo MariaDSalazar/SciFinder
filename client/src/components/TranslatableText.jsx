@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Languages, TriangleAlert } from "lucide-react";
 import { translateText } from "../services/papersApi.js";
 
 // Idiomas ofrecidos. "original" no llama a la API: vuelve al texto tal cual.
@@ -45,7 +46,9 @@ export function TranslatableText({ text }) {
       <p>{displayedText}</p>
 
       <div className="translatable__controls">
-        <span className="translatable__label">🌐 Ver en:</span>
+        <span className="translatable__label">
+          <Languages size={13} aria-hidden="true" /> Ver en:
+        </span>
         {LANG_OPTIONS.map((option) => (
           <button
             key={option.id}
@@ -61,7 +64,11 @@ export function TranslatableText({ text }) {
             {loadingLang === option.id ? "Traduciendo..." : option.label}
           </button>
         ))}
-        {error && <span className="translatable__error">⚠️ {error}</span>}
+        {error && (
+          <span className="translatable__error">
+            <TriangleAlert size={13} aria-hidden="true" /> {error}
+          </span>
+        )}
       </div>
     </div>
   );

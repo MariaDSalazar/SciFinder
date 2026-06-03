@@ -1,3 +1,4 @@
+import { Bookmark, Star, TriangleAlert } from "lucide-react";
 import { PaperList } from "./PaperList.jsx";
 import { StatusMessage } from "./StatusMessage.jsx";
 
@@ -7,12 +8,17 @@ export function FavoritesView({ favoritesState, onSelectPaper }) {
   const { favorites, error, isFavorite, toggleFavorite } = favoritesState;
 
   if (error) {
-    return <StatusMessage icon="⚠️">{error}</StatusMessage>;
+    return (
+      <StatusMessage icon={<TriangleAlert size={44} strokeWidth={1.5} aria-hidden="true" />}>
+        {error}
+      </StatusMessage>
+    );
   }
   if (favorites.length === 0) {
     return (
-      <StatusMessage icon="⭐">
-        Aún no tienes favoritos. Marca la estrella ☆ de un paper para guardarlo aquí.
+      <StatusMessage icon={<Star size={44} strokeWidth={1.5} aria-hidden="true" />}>
+        Aún no tienes favoritos. Marca la estrella <Star size={13} aria-hidden="true" /> de un
+        paper para guardarlo aquí.
       </StatusMessage>
     );
   }
@@ -24,7 +30,8 @@ export function FavoritesView({ favoritesState, onSelectPaper }) {
       {Object.entries(groups).map(([topic, papers]) => (
         <section key={topic} className="favorites-group">
           <h2 className="favorites-group__title">
-            🔖 {topic} <span className="favorites-group__count">({papers.length})</span>
+            <Bookmark size={17} aria-hidden="true" /> {topic}{" "}
+            <span className="favorites-group__count">({papers.length})</span>
           </h2>
           <PaperList
             papers={papers}

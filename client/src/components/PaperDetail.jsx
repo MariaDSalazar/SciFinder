@@ -1,4 +1,16 @@
 import { useEffect } from "react";
+import {
+  ChartColumn,
+  ExternalLink,
+  FileText,
+  Library,
+  LockOpen,
+  Quote,
+  Sparkles,
+  Star,
+  TriangleAlert,
+  X,
+} from "lucide-react";
 import { usePaperDetail } from "../hooks/usePaperDetail.js";
 import { StatusMessage } from "./StatusMessage.jsx";
 import { LoadingMessage } from "./LoadingMessage.jsx";
@@ -7,7 +19,7 @@ import { TranslatableText } from "./TranslatableText.jsx";
 
 // Modal con el detalle completo de un paper, enriquecido por el backend con
 // TLDR (resumen IA), citas influyentes (S2), citas abiertas (OpenCitations)
-// y PDF rescatado por CORE. Se cierra con ✕, click fuera o la tecla Esc.
+// y PDF rescatado por CORE. Se cierra con la X, click fuera o la tecla Esc.
 export function PaperDetail({ paperId, onClose }) {
   const { paper, status, error } = usePaperDetail(paperId);
 
@@ -24,11 +36,15 @@ export function PaperDetail({ paperId, onClose }) {
     <div className="modal" onClick={onClose} role="presentation">
       <div className="modal__content" onClick={(event) => event.stopPropagation()}>
         <button className="modal__close" onClick={onClose} aria-label="Cerrar detalle">
-          ✕
+          <X size={18} aria-hidden="true" />
         </button>
 
         {status === "loading" && <LoadingMessage>Cargando detalle...</LoadingMessage>}
-        {status === "error" && <StatusMessage icon="⚠️">{error}</StatusMessage>}
+        {status === "error" && (
+          <StatusMessage icon={<TriangleAlert size={44} strokeWidth={1.5} aria-hidden="true" />}>
+            {error}
+          </StatusMessage>
+        )}
         {status === "success" && paper && <PaperDetailContent paper={paper} />}
       </div>
     </div>
@@ -52,27 +68,34 @@ function PaperDetailContent({ paper }) {
       )}
 
       <div className="paper-detail__stats">
-        <span title="Total de citas según OpenAlex">📊 {paper.citations.toLocaleString("es")} citas</span>
+        <span title="Total de citas según OpenAlex">
+          <ChartColumn size={15} aria-hidden="true" /> {paper.citations.toLocaleString("es")} citas
+        </span>
         {paper.influentialCitations !== null && (
           <span title="Citas que influyeron de forma significativa en otros trabajos (Semantic Scholar)">
-            ⭐ {paper.influentialCitations.toLocaleString("es")} citas influyentes
+            <Star size={15} aria-hidden="true" />{" "}
+            {paper.influentialCitations.toLocaleString("es")} citas influyentes
           </span>
         )}
         {paper.openCitations?.citationCount !== null && paper.openCitations && (
           <span title="Citas registradas en el índice abierto de OpenCitations">
-            🔓 {paper.openCitations.citationCount.toLocaleString("es")} citas abiertas
+            <LockOpen size={15} aria-hidden="true" />{" "}
+            {paper.openCitations.citationCount.toLocaleString("es")} citas abiertas
           </span>
         )}
         {paper.openCitations?.referenceCount !== null && paper.openCitations && (
           <span title="A cuántos trabajos cita este paper (OpenCitations)">
-            📚 {paper.openCitations.referenceCount.toLocaleString("es")} referencias
+            <Library size={15} aria-hidden="true" />{" "}
+            {paper.openCitations.referenceCount.toLocaleString("es")} referencias
           </span>
         )}
       </div>
 
       {paper.tldr && (
         <section className="paper-detail__section paper-detail__tldr">
-          <h3>🤖 Resumen IA (TLDR)</h3>
+          <h3>
+            <Sparkles size={15} aria-hidden="true" /> Resumen IA (TLDR)
+          </h3>
           <TranslatableText text={paper.tldr} />
         </section>
       )}
@@ -85,19 +108,22 @@ function PaperDetailContent({ paper }) {
       )}
 
       <section className="paper-detail__section">
-        <h3>📋 Citar este paper</h3>
+        <h3>
+          <Quote size={15} aria-hidden="true" /> Citar este paper
+        </h3>
         <CitationBox paper={paper} />
       </section>
 
       <footer className="paper-detail__links">
         {paper.pdfUrl && (
           <a href={paper.pdfUrl} target="_blank" rel="noreferrer">
-            📄 Ver PDF{paper.pdfSource ? ` (vía ${paper.pdfSource})` : ""}
+            <FileText size={15} aria-hidden="true" /> Ver PDF
+            {paper.pdfSource ? ` (vía ${paper.pdfSource})` : ""}
           </a>
         )}
         {paper.landingUrl && (
           <a href={paper.landingUrl} target="_blank" rel="noreferrer">
-            🔗 Ver publicación (DOI)
+            <ExternalLink size={15} aria-hidden="true" /> Ver publicación (DOI)
           </a>
         )}
       </footer>

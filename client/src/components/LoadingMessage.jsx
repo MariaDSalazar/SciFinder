@@ -19,7 +19,7 @@ export function LoadingMessage({ children }) {
   return (
     <StatusMessage spinner>
       {isSlow
-        ? "El servidor gratuito está despertando, dame unos segunditos... ⏳"
+        ? "El servidor gratuito está despertando, dame unos segunditos..."
         : children}
     </StatusMessage>
   );

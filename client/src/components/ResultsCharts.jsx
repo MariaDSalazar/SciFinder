@@ -1,3 +1,4 @@
+import { Lightbulb, TrendingUp, Trophy } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -24,7 +25,9 @@ export function ResultsCharts({ byYear, results, onYearClick }) {
     <section className="charts">
       {byYear.length > 0 && (
         <div className="charts__panel">
-          <h3>📈 Papers por año (tema completo)</h3>
+          <h3>
+            <TrendingUp size={15} aria-hidden="true" /> Papers por año (tema completo)
+          </h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart
               data={byYear}
@@ -41,13 +44,18 @@ export function ResultsCharts({ byYear, results, onYearClick }) {
               <Bar dataKey="count" name="papers" fill="#2f6df6" />
             </BarChart>
           </ResponsiveContainer>
-          <p className="charts__hint">💡 Haz click en una barra para ver solo ese año.</p>
+          <p className="charts__hint">
+            <Lightbulb size={13} aria-hidden="true" /> Haz click en una barra para ver solo ese
+            año.
+          </p>
         </div>
       )}
 
       {topCited.length > 0 && (
         <div className="charts__panel">
-          <h3>🏆 Más citados (de esta página)</h3>
+          <h3>
+            <Trophy size={15} aria-hidden="true" /> Más citados (de esta página)
+          </h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={topCited} layout="vertical" margin={{ left: 8 }}>
               <XAxis type="number" tick={{ fontSize: 11 }} />

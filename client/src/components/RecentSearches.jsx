@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { History } from "lucide-react";
 import { getRecentSearches } from "../services/papersApi.js";
 
 // Chips con las últimas búsquedas (guardadas en el backend).
@@ -16,7 +17,9 @@ export function RecentSearches({ onPick }) {
 
   return (
     <div className="recent-searches">
-      <span className="recent-searches__label">🕘 Búsquedas recientes:</span>
+      <span className="recent-searches__label">
+        <History size={14} aria-hidden="true" /> Búsquedas recientes:
+      </span>
       {searches.map((item) => (
         <button
           key={item.query}

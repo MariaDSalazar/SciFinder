@@ -1,6 +1,8 @@
+import { ExternalLink, FileText, Star } from "lucide-react";
+
 // Muestra UN paper. Componente de presentación puro: recibe el paper por props
 // y solo lo dibuja. Se reutiliza igual en resultados de búsqueda y en favoritos.
-// Avisa al padre con onSelect(id) (abrir detalle) y onToggleFavorite(paper) (⭐).
+// Avisa al padre con onSelect(id) (abrir detalle) y onToggleFavorite(paper) (estrella).
 export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
   const authors = formatAuthors(paper.authors);
   const saved = isFavorite(paper.id);
@@ -33,7 +35,7 @@ export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
           title={saved ? "Quitar de favoritos" : "Guardar en favoritos"}
           aria-label={saved ? "Quitar de favoritos" : "Guardar en favoritos"}
         >
-          {saved ? "⭐" : "☆"}
+          <Star size={20} fill={saved ? "currentColor" : "none"} aria-hidden="true" />
         </button>
       </header>
 
@@ -57,12 +59,13 @@ export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
             rel="noreferrer"
             title={paper.pdfSource ? `PDF alojado en ${paper.pdfSource}` : "PDF de acceso abierto"}
           >
-            📄 PDF{paper.pdfSource ? ` · ${paper.pdfSource}` : ""}
+            <FileText size={14} aria-hidden="true" /> PDF
+            {paper.pdfSource ? ` · ${paper.pdfSource}` : ""}
           </a>
         )}
         {paper.landingUrl && (
           <a href={paper.landingUrl} target="_blank" rel="noreferrer">
-            🔗 Ver publicación
+            <ExternalLink size={14} aria-hidden="true" /> Ver publicación
           </a>
         )}
         {paper.hasDetail ? (
@@ -81,7 +84,7 @@ export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
             rel="noreferrer"
             title="Este motor no tiene vista de detalle; abre la ficha oficial"
           >
-            Ver ficha ↗
+            Ver ficha <ExternalLink size={13} aria-hidden="true" />
           </a>
         )}
       </footer>

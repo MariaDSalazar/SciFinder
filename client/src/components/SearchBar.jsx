@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { CalendarDays, X } from "lucide-react";
 
 // Opciones centralizadas para no repetir cadenas mágicas.
 const SORT_OPTIONS = [
@@ -113,7 +114,7 @@ export function SearchBar({
             onClick={handleClearYears}
             title="Quitar el filtro de años"
           >
-            ✕ Quitar años
+            <X size={13} aria-hidden="true" /> Quitar años
           </button>
         )}
 
@@ -146,7 +147,8 @@ export function SearchBar({
 
       {yearRange && (
         <p className="search-bar__hint">
-          📅 Hay papers sobre este tema desde <strong>{yearRange.from}</strong> hasta{" "}
+          <CalendarDays size={14} aria-hidden="true" /> Hay papers sobre este tema desde{" "}
+          <strong>{yearRange.from}</strong> hasta{" "}
           <strong>{yearRange.to}</strong>. Al cambiar los filtros, la búsqueda se actualiza sola.
         </p>
       )}

@@ -1,4 +1,14 @@
 import { useEffect, useState } from "react";
+import {
+  ChevronDown,
+  Heart,
+  Lightbulb,
+  Microscope,
+  Search,
+  SearchX,
+  Star,
+  TriangleAlert,
+} from "lucide-react";
 import { SearchBar } from "./components/SearchBar.jsx";
 import { PaperList } from "./components/PaperList.jsx";
 import { PaperDetail } from "./components/PaperDetail.jsx";
@@ -85,7 +95,9 @@ export default function App() {
   return (
     <div className="app">
       <header className="app__header">
-        <h1 className="app__title">🔬 SciFinder</h1>
+        <h1 className="app__title">
+          <Microscope className="app__title-icon" size={34} aria-hidden="true" /> SciFinder
+        </h1>
         <p className="app__subtitle">Busca papers científicos reales</p>
       </header>
 
@@ -95,14 +107,14 @@ export default function App() {
           className={view === "search" ? "app__tab app__tab--active" : "app__tab"}
           onClick={() => setView("search")}
         >
-          🔎 Buscar
+          <Search size={15} aria-hidden="true" /> Buscar
         </button>
         <button
           type="button"
           className={view === "favorites" ? "app__tab app__tab--active" : "app__tab"}
           onClick={() => setView("favorites")}
         >
-          ⭐ Favoritos ({favoritesState.favorites.length})
+          <Star size={15} aria-hidden="true" /> Favoritos ({favoritesState.favorites.length})
         </button>
       </nav>
 
@@ -155,7 +167,8 @@ export default function App() {
       )}
 
       <footer className="app__footer">
-        Hecho con 💜 por Maria del Carmen Salazar Torres · Datos: OpenAlex · Semantic Scholar ·
+        Hecho con <Heart className="app__footer-heart" size={12} fill="currentColor" aria-label="amor" />{" "}
+        por Maria del Carmen Salazar Torres · Datos: OpenAlex · Semantic Scholar ·
         Crossref · Europe PMC · ERIC · OpenCitations · CORE
       </footer>
     </div>
@@ -202,16 +215,28 @@ function renderResults({
   onLoadMore,
 }) {
   if (status === "idle") {
-    return <StatusMessage icon="🔎">Escribe un tema y presiona “Buscar” para empezar.</StatusMessage>;
+    return (
+      <StatusMessage icon={<Search size={44} strokeWidth={1.5} aria-hidden="true" />}>
+        Escribe un tema y presiona “Buscar” para empezar.
+      </StatusMessage>
+    );
   }
   if (status === "loading") {
     return <LoadingMessage>Buscando papers...</LoadingMessage>;
   }
   if (status === "error") {
-    return <StatusMessage icon="⚠️">{error}</StatusMessage>;
+    return (
+      <StatusMessage icon={<TriangleAlert size={44} strokeWidth={1.5} aria-hidden="true" />}>
+        {error}
+      </StatusMessage>
+    );
   }
   if (results.length === 0) {
-    return <StatusMessage icon="🤷">No se encontraron resultados. Prueba con otros términos.</StatusMessage>;
+    return (
+      <StatusMessage icon={<SearchX size={44} strokeWidth={1.5} aria-hidden="true" />}>
+        No se encontraron resultados. Prueba con otros términos.
+      </StatusMessage>
+    );
   }
 
   return (
@@ -222,7 +247,8 @@ function renderResults({
           type="button"
           onClick={() => onPickSuggestion(englishSuggestion)}
         >
-          💡 Las fuentes científicas indexan en inglés — ¿buscar también{" "}
+          <Lightbulb size={15} aria-hidden="true" /> Las fuentes científicas indexan en inglés —
+          ¿buscar también{" "}
           <strong>“{englishSuggestion}”</strong>?
         </button>
       )}
@@ -245,7 +271,13 @@ function renderResults({
               onClick={onLoadMore}
               disabled={loadingMore}
             >
-              {loadingMore ? "Cargando..." : "⬇️ Cargar más resultados"}
+              {loadingMore ? (
+                "Cargando..."
+              ) : (
+                <>
+                  <ChevronDown size={16} aria-hidden="true" /> Cargar más resultados
+                </>
+              )}
             </button>
           )}
         </div>

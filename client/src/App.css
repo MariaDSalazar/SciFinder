@@ -1,3 +1,10 @@
+/* ── Iconos SVG (lucide) ────────────────────────── */
+/* Los iconos acompañan texto: se alinean a la línea base y nunca se encogen. */
+svg.lucide {
+  flex-shrink: 0;
+  vertical-align: -0.18em;
+}
+
 /* ── Layout principal ───────────────────────────── */
 .app {
   max-width: 1200px;
@@ -13,6 +20,14 @@
 .app__title {
   margin: 0;
   font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.app__title-icon {
+  color: var(--color-primary);
 }
 
 .app__subtitle {
@@ -34,6 +49,9 @@
 }
 
 .app__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   padding: 0.5rem 1.1rem;
   font-size: 0.95rem;
   font-weight: 600;
@@ -236,9 +254,9 @@
 /* Estrella de favorito en la esquina de la tarjeta. */
 .paper-card__fav {
   flex-shrink: 0;
+  display: inline-flex;
   border: none;
   background: none;
-  font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
   color: var(--color-muted);
@@ -451,6 +469,10 @@
 }
 
 /* ── Pie de página ──────────────────────────────── */
+.app__footer-heart {
+  color: #7c3aed;
+}
+
 .app__footer {
   margin-top: 3rem;
   padding-top: 1rem;
@@ -529,6 +551,13 @@
   margin-top: 1rem;
   font-size: 0.95rem;
   font-weight: 600;
+}
+
+/* Cada métrica alinea su icono con el número. */
+.paper-detail__stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .paper-detail__section {
