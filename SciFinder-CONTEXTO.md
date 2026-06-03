@@ -151,7 +151,12 @@ OpenAlex es la base. Las demás APIs **enriquecen** cada paper (resúmenes con I
 - [x] **Fase 6 — Caché y robustez:** ✅ Caché en memoria con TTL y límite de entradas (`lib/cache.js`): búsquedas 5 min, detalle 30 min, traducciones 24 h. Cabecera `X-Cache: HIT/MISS` para verificarla. Detalle pasó de ~2.7 s a ~20 ms en repetición. La robustez se construyó a lo largo de las fases: enriquecimientos tolerantes a fallos, motores que no se tumban entre sí, reintento ante 429 de S2, descarte de respuestas tardías y estados carga/error/vacío en la UI.
 - [x] **Fase 7 — Texto completo (CORE):** ✅ Integrado vía endpoint `Discover` de CORE (API key segura en `.env`, jamás llega al navegador). Cuando un paper no trae PDF, el backend le pregunta a CORE y, si existe copia de acceso abierto, el detalle muestra "Ver PDF (vía CORE)". Solo se consulta cuando falta el PDF (cuida el cupo diario) y es tolerante a fallos. El pie de fuentes ahora incluye CORE ✓/—.
 - [x] **Fase 8 — Pulido:** ✅ Botón "Cargar más resultados" (paginación acumulativa con filtro de duplicados por id). Spinner animado en estados de carga. Modal se cierra con Esc. Mejoras responsive para móvil (filtros, modal, tipografía). Pie de página con créditos y fuentes. Meta descripción para buscadores.
-- [ ] **Fase 9 — Publicación:** subir a GitHub + desplegar (frontend en Vercel/Netlify, backend + BD en Render/Railway/Fly.io). README con capturas para el portafolio.
+- [x] **Fase 9 — Publicación:** ✅ **App en producción.**
+  - Frontend: **GitHub Pages** → https://mariadsalazar.github.io/SciFinder/ (deploy automático con GitHub Actions en cada push).
+  - Backend: **Render** (plan free) → https://scifinder-api.onrender.com (nota: se "duerme" tras ~15 min sin uso; la primera visita tarda ~1 min en despertarlo).
+  - Base de datos: **PostgreSQL en Neon** (misma BD para desarrollo y producción).
+  - Repo público (historial auditado sin secretos): https://github.com/MariaDSalazar/SciFinder
+  - Pendiente menor: README con capturas para el portafolio.
 
 ---
 
