@@ -20,6 +20,7 @@ export function toPaper(work) {
     // Repositorio que aloja el PDF (arXiv, PubMed Central, etc.), según OpenAlex.
     pdfSource: work.best_oa_location?.source?.display_name ?? null,
     landingUrl: work.doi ?? work.id,
+    engine: "OpenAlex",
   };
 }
 

@@ -37,6 +37,7 @@ export function PaperCard({ paper, onSelect, isFavorite, onToggleFavorite }) {
         {authors && <span>{authors}</span>}
         {paper.venue && <span> · {paper.venue}</span>}
         {paper.year && <span> · {paper.year}</span>}
+        {paper.engine && <span className="paper-card__engine"> · vía {paper.engine}</span>}
       </p>
 
       {paper.abstract && <p className="paper-card__abstract">{paper.abstract}</p>}

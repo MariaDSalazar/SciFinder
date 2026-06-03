@@ -13,7 +13,7 @@ import "./App.css";
 // Componente principal: compone la página y decide QUÉ mostrar según el estado.
 // La lógica de búsqueda y favoritos vive en hooks; aquí solo coordinamos la vista.
 export default function App() {
-  const { results, total, yearRange, byYear, status, error, search } = usePaperSearch();
+  const { results, total, totals, yearRange, byYear, status, error, search } = usePaperSearch();
   const favoritesState = useFavorites();
   const [query, setQuery] = useState("");
   const [selectedPaperId, setSelectedPaperId] = useState(null);
@@ -68,6 +68,7 @@ export default function App() {
             {renderResults({
               results,
               total,
+              totals,
               byYear,
               status,
               error,
@@ -95,6 +96,7 @@ export default function App() {
 function renderResults({
   results,
   total,
+  totals,
   byYear,
   status,
   error,
@@ -117,7 +119,16 @@ function renderResults({
 
   return (
     <>
-      <p className="app__count">{total.toLocaleString("es")} resultados encontrados</p>
+      <p className="app__count">
+        {total.toLocaleString("es")} resultados encontrados
+        {totals?.openAlex != null && totals?.semanticScholar != null && (
+          <>
+            {" "}
+            (OpenAlex: {totals.openAlex.toLocaleString("es")} · Semantic Scholar:{" "}
+            {totals.semanticScholar.toLocaleString("es")})
+          </>
+        )}
+      </p>
       <ResultsCharts byYear={byYear} results={results} />
       <PaperList
         papers={results}

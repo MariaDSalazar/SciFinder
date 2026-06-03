@@ -11,6 +11,7 @@ export function usePaperSearch() {
     total: data?.total ?? 0,
     yearRange: data?.yearRange ?? null,
     byYear: data?.byYear ?? [],
+    totals: data?.totals ?? null,
     status,
     error,
     search: run,

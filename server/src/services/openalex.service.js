@@ -62,11 +62,13 @@ export async function searchPapers({ query, page, perPage, sort, fromYear, toYea
 // Estadísticas por año para una búsqueda, usando la agregación de OpenAlex
 // (group_by=publication_year). Devuelve el rango {from, to} y la serie
 // byYear [{year, count}] para graficar la producción del tema.
+// Exportada porque el orquestador (search.service) también la usa cuando
+// el motor elegido es Semantic Scholar: las estadísticas del TEMA son las mismas.
 // OpenAlex trae registros mal fechados (ej. un paper de "1403" sobre machine
 // learning, o años futuros de artículos "in press"); para no mostrar rangos
 // absurdos, se descartan los años futuros y los que tienen una cantidad
 // insignificante de papers (< 0.01% del total).
-async function getYearStats(query) {
+export async function getYearStats(query) {
   const params = new URLSearchParams({ search: query, group_by: "publication_year" });
   const data = await fetchJson(`${config.openAlex.baseUrl}/works?${params}`);
 

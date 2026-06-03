@@ -1,5 +1,5 @@
 import { ApiError } from "../lib/ApiError.js";
-import { isOpenAlexId } from "../lib/validation.js";
+import { isPaperId } from "../lib/validation.js";
 import { listFavorites, saveFavorite, deleteFavorite } from "../services/favorites.service.js";
 
 // GET /api/favorites — lista de papers guardados.
@@ -15,7 +15,7 @@ export async function handleListFavorites(req, res, next) {
 export async function handleSaveFavorite(req, res, next) {
   try {
     const paper = req.body ?? {};
-    if (!isOpenAlexId(paper.id)) {
+    if (!isPaperId(paper.id)) {
       throw new ApiError(400, "El campo 'id' del paper no es válido");
     }
     if (typeof paper.title !== "string" || paper.title.trim().length === 0) {
@@ -39,7 +39,7 @@ export async function handleSaveFavorite(req, res, next) {
 export async function handleDeleteFavorite(req, res, next) {
   try {
     const { id } = req.params;
-    if (!isOpenAlexId(id)) {
+    if (!isPaperId(id)) {
       throw new ApiError(400, "El id del favorito no es válido");
     }
 

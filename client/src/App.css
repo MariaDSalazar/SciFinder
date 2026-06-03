@@ -230,6 +230,12 @@
   font-size: 0.88rem;
 }
 
+/* Motor de búsqueda del que salió el resultado. */
+.paper-card__engine {
+  color: var(--color-primary);
+  font-size: 0.8rem;
+}
+
 .paper-card__abstract {
   margin: 0.7rem 0 0;
   font-size: 0.92rem;

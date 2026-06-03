@@ -110,6 +110,11 @@ OpenAlex es la base. Las demás APIs **enriquecen** cada paper (resúmenes con I
 - **Citas bibliográficas en varios formatos:** APA 7, MLA 9, Chicago y BibTeX, con botón de copiar.
 - **Traducción del resumen:** el TLDR y el abstract se pueden ver en Original / Español / English (endpoint propio `POST /api/translate`, con caché en el cliente para no repetir llamadas).
 
+### 5.1.1 Selector de motor de búsqueda
+- El usuario elige el motor: **OpenAlex**, **Semantic Scholar** o **Todos** (busca en ambos en paralelo y combina sin duplicados por DOI).
+- Cada resultado muestra `vía OpenAlex` / `vía Semantic Scholar`. Si un motor falla, el combinado sigue con el otro.
+- Al cambiar cualquier filtro (años, orden, motor) con un tema escrito, la búsqueda **se relanza sola** (con espera de 600 ms).
+
 ### 5.2.1 Rango de años inteligente
 - Al buscar, el backend consulta a OpenAlex desde/hasta qué año hay papers del tema (`group_by=publication_year`), filtrando años atípicos (datos mal fechados o futuros).
 - El frontend acota los campos de año a ese rango y muestra la pista "hay papers desde X hasta Y".

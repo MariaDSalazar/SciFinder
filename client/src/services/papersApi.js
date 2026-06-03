@@ -17,10 +17,11 @@ async function requestJson(path, { method = "GET", body } = {}) {
   return data;
 }
 
-// Busca papers en el backend con filtros y orden.
-export function searchPapers({ query, fromYear, toYear, sort, page, perPage }) {
+// Busca papers en el backend con filtros, orden y motor elegido.
+export function searchPapers({ query, fromYear, toYear, sort, engine, page, perPage }) {
   const params = new URLSearchParams({ q: query });
   if (sort) params.set("sort", sort);
+  if (engine) params.set("engine", engine);
   if (page) params.set("page", String(page));
   if (perPage) params.set("perPage", String(perPage));
   if (fromYear) params.set("fromYear", String(fromYear));

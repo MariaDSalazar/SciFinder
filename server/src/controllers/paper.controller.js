@@ -1,5 +1,5 @@
 import { ApiError } from "../lib/ApiError.js";
-import { isOpenAlexId } from "../lib/validation.js";
+import { isPaperId } from "../lib/validation.js";
 import { getPaperById } from "../services/openalex.service.js";
 import { getEnrichment } from "../services/semanticscholar.service.js";
 import { getOpenCitationsStats } from "../services/opencitations.service.js";
@@ -10,8 +10,8 @@ import { getOpenCitationsStats } from "../services/opencitations.service.js";
 export async function handleGetPaper(req, res, next) {
   try {
     const { id } = req.params;
-    if (!isOpenAlexId(id)) {
-      throw new ApiError(400, "El id del paper no es válido (formato esperado: W seguido de números)");
+    if (!isPaperId(id)) {
+      throw new ApiError(400, "El id del paper no es válido (se espera 'W...' o 'doi:10...')");
     }
 
     const paper = await getPaperById(id);

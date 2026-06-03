@@ -1,10 +1,11 @@
 import { ApiError } from "../lib/ApiError.js";
-import { searchPapers } from "../services/openalex.service.js";
+import { searchPapers } from "../services/search.service.js";
 import { recordSearch } from "../services/history.service.js";
 
 const DEFAULT_PER_PAGE = 25;
 const MAX_PER_PAGE = 50;
 const VALID_SORTS = ["relevance", "citations"];
+const VALID_ENGINES = ["openalex", "semanticscholar", "all"];
 
 // Lee, valida y normaliza los parámetros de la query string.
 // Mantiene al controlador delgado y deja la entrada en un formato seguro.
@@ -20,11 +21,12 @@ function parseSearchParams(query) {
   const perPage = Math.min(MAX_PER_PAGE, Math.max(1, requestedPerPage));
 
   const sort = VALID_SORTS.includes(query.sort) ? query.sort : "relevance";
+  const engine = VALID_ENGINES.includes(query.engine) ? query.engine : "openalex";
 
   const fromYear = parseYear(query.fromYear);
   const toYear = parseYear(query.toYear);
 
-  return { query: term, page, perPage, sort, fromYear, toYear };
+  return { query: term, page, perPage, sort, engine, fromYear, toYear };
 }
 
 // Convierte un año a número; devuelve undefined si no es válido (así se ignora el filtro).
