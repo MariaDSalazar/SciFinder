@@ -7,6 +7,9 @@
 
 > ⏳ *Nota: el backend corre en un plan gratuito y "duerme" tras 15 min de inactividad — la primera búsqueda puede tardar ~1 minuto en despertar el servidor. Las siguientes son rápidas.*
 
+![Búsqueda en SciFinder: resultados multi-motor con gráficas interactivas](docs/busqueda.png)
+*Búsqueda combinada en 5 motores con desglose de resultados por fuente, filtros de año activos y gráfica de producción por año (clickeable para filtrar).*
+
 ---
 
 ## ✨ Funcionalidades
@@ -23,6 +26,15 @@
 - 🎚️ **Filtros inteligentes**: rango de años acotado a los años donde realmente existen papers (descartando datos mal fechados), orden por relevancia o citas, y re-búsqueda automática al cambiar cualquier filtro.
 - ⚡ **Caché en el servidor** con TTL: repetir una búsqueda/detalle/traducción responde en ~20 ms sin tocar las APIs externas (cabecera `X-Cache: HIT/MISS`).
 - 📱 Diseño responsive, estados de carga/error/vacío, paginación "cargar más" y cierre de modal con `Esc`.
+
+---
+
+## 📸 Capturas
+
+| Pantalla principal | Favoritos por tema |
+|---|---|
+| ![Pantalla principal con búsquedas recientes](docs/pantalla-principal.png) | ![Favoritos agrupados por tema de búsqueda](docs/favoritos.png) |
+| Filtros de año, orden y motor, con búsquedas recientes de la sesión. | Los papers guardados se agrupan por el tema con el que se buscaron. |
 
 ---
 

@@ -1,3 +1,5 @@
+import { stripMarkup } from "../lib/cleanText.js";
+
 // Convierte un registro crudo de Crossref a NUESTRA forma de paper.
 // El id se construye con el DOI ("doi:10..."), igual que en Semantic Scholar:
 // así detalle y favoritos funcionan idéntico para cualquier motor.
@@ -8,7 +10,8 @@ export function toPaperFromCrossref(item) {
     id: doi ? `doi:${doi}` : null,
     doi: doi ? `https://doi.org/${doi}` : null,
     title: item.title?.[0] ?? "Sin título",
-    abstract: cleanJatsAbstract(item.abstract),
+    // Crossref entrega el abstract en XML JATS → se limpia el marcado.
+    abstract: stripMarkup(item.abstract),
     year: item.issued?.["date-parts"]?.[0]?.[0] ?? null,
     citations: item["is-referenced-by-count"] ?? 0,
     authors: (item.author ?? [])
@@ -22,12 +25,4 @@ export function toPaperFromCrossref(item) {
     engine: "Crossref",
     hasDetail: true, // tiene vista de detalle enriquecida (por DOI)
   };
-}
-
-// Crossref entrega el abstract en XML JATS ("<jats:p>texto</jats:p>"):
-// se quitan las etiquetas y se normalizan los espacios.
-function cleanJatsAbstract(abstract) {
-  if (!abstract) return null;
-  const text = abstract.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-  return text.length > 0 ? text : null;
 }

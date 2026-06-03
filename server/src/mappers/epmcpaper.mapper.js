@@ -1,3 +1,5 @@
+import { stripMarkup } from "../lib/cleanText.js";
+
 // Convierte un registro crudo de Europe PMC a NUESTRA forma de paper.
 // Igual que con los demás motores: id por DOI ("doi:10...") para que
 // detalle y favoritos funcionen idéntico.
@@ -7,8 +9,9 @@ export function toPaperFromEuropePmc(result) {
   return {
     id: doi ? `doi:${doi}` : null,
     doi: doi ? `https://doi.org/${doi}` : null,
-    title: result.title ?? "Sin título",
-    abstract: result.abstractText ?? null,
+    title: stripMarkup(result.title) ?? "Sin título",
+    // Europe PMC mete HTML dentro del abstract (<h4>, <i>...) → se limpia.
+    abstract: stripMarkup(result.abstractText),
     year: result.pubYear ? Number.parseInt(result.pubYear, 10) : null,
     citations: result.citedByCount ?? 0,
     authors: extractAuthors(result),
