@@ -7,8 +7,8 @@
 
 > ⏳ *Nota: el backend corre en un plan gratuito y "duerme" tras 15 min de inactividad — la primera búsqueda puede tardar ~1 minuto en despertar el servidor. Las siguientes son rápidas.*
 
-![Búsqueda en SciFinder: resultados multi-motor con gráficas interactivas](docs/busqueda.png)
-*Búsqueda combinada en 5 motores con desglose de resultados por fuente, filtros de año activos y gráfica de producción por año (clickeable para filtrar).*
+![Búsqueda en SciFinder: resultados reales con gráficas interactivas](docs/busqueda.png)
+*Búsqueda con resultados reales: rango de años detectado del tema, enlaces a PDF, favoritos y gráfica de producción por año (clickeable para filtrar).*
 
 ---
 
