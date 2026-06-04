@@ -45,9 +45,19 @@ export function SearchBar({
   const minYear = yearRange?.from ?? 1500;
   const maxYear = yearRange?.to ?? new Date().getFullYear();
 
+  // Rango inválido: "Hasta" menor que "Desde" (con ambos años puestos).
+  const invalidRange =
+    fromYear !== "" && toYear !== "" && Number(toYear) < Number(fromYear);
+
+  // Un año tiene a lo más 4 dígitos: se descarta cualquier otro carácter
+  // y lo que pase de cuatro (los inputs number no respetan maxLength).
+  function cleanYear(value) {
+    return value.replace(/\D/g, "").slice(0, 4);
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
-    if (!query.trim()) return;
+    if (!query.trim() || invalidRange) return;
     onSearch();
   }
 
@@ -64,7 +74,7 @@ export function SearchBar({
       isFirstRender.current = false;
       return;
     }
-    if (!query.trim()) return;
+    if (!query.trim() || invalidRange) return;
 
     const timer = setTimeout(onSearch, AUTO_SEARCH_DELAY);
     return () => clearTimeout(timer);
@@ -86,24 +96,26 @@ export function SearchBar({
         <label className="search-bar__field">
           Desde
           <input
-            type="number"
-            min={minYear}
-            max={maxYear}
+            type="text"
+            inputMode="numeric"
+            maxLength={4}
             placeholder={String(minYear)}
             value={fromYear}
-            onChange={(event) => onFromYearChange(event.target.value)}
+            onChange={(event) => onFromYearChange(cleanYear(event.target.value))}
           />
         </label>
 
         <label className="search-bar__field">
           Hasta
           <input
-            type="number"
-            min={minYear}
-            max={maxYear}
+            type="text"
+            inputMode="numeric"
+            maxLength={4}
             placeholder={String(maxYear)}
             value={toYear}
-            onChange={(event) => onToYearChange(event.target.value)}
+            onChange={(event) => onToYearChange(cleanYear(event.target.value))}
+            aria-invalid={invalidRange}
+            className={invalidRange ? "search-bar__year--invalid" : undefined}
           />
         </label>
 
@@ -144,6 +156,12 @@ export function SearchBar({
           {disabled ? "Buscando..." : "Buscar"}
         </button>
       </div>
+
+      {invalidRange && (
+        <p className="search-bar__range-error" role="alert">
+          El año “Hasta” debe ser igual o mayor que “Desde”.
+        </p>
+      )}
 
       {yearRange && (
         <p className="search-bar__hint">
