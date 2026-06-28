@@ -1,0 +1,62 @@
+# Despliegue automático del backend a Hugging Face Spaces.
+# En cada push a main que toque el server (o estos archivos de despliegue),
+# se ensambla un árbol limpio (app + Dockerfile + README del Space) y se
+# empuja al repositorio git del Space en huggingface.co.
+#
+# Requisitos (se configuran una sola vez):
+#   - Secret  HF_TOKEN  : token de escritura de Hugging Face
+#                         (GitHub → Settings → Secrets and variables → Actions → Secrets)
+#   - Variable HF_SPACE : "usuario/scifinder-api"  (el id del Space)
+#                         (GitHub → Settings → Secrets and variables → Actions → Variables)
+# Mientras no existan, el workflow no falla: simplemente se omite el despliegue.
+name: Desplegar backend en Hugging Face Spaces
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "deploy/hf-space/**"
+      - ".github/workflows/deploy-hf-space.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: hf-space
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensamblar y empujar al Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ vars.HF_SPACE }}
+        run: |
+          set -e
+          if [ -z "$HF_TOKEN" ] || [ -z "$HF_SPACE" ]; then
+            echo "::notice::HF_TOKEN/HF_SPACE aún no configurados; se omite el despliegue."
+            exit 0
+          fi
+
+          HF_USER="${HF_SPACE%%/*}"
+
+          # Árbol limpio que verá el Space: solo lo necesario para construir.
+          rm -rf build && mkdir -p build
+          cp server/package.json server/package-lock.json build/
+          cp -r server/prisma build/prisma
+          cp -r server/src build/src
+          rm -f build/prisma/dev.db build/prisma/dev.db-journal
+          cp deploy/hf-space/Dockerfile build/Dockerfile
+          cp deploy/hf-space/README.md build/README.md
+
+          cd build
+          git init -q
+          git checkout -q -b main
+          git config user.email "deploy@github.actions"
+          git config user.name "github-actions"
+          git add .
+          git commit -q -m "Deploy desde GitHub ${GITHUB_SHA::7}"
+          git push -f "https://${HF_USER}:${HF_TOKEN}@huggingface.co/spaces/${HF_SPACE}.git" main
