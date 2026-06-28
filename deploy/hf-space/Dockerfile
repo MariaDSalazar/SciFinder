@@ -12,22 +12,24 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
-# Hugging Face ejecuta el contenedor como el usuario uid 1000.
-RUN useradd -m -u 1000 user
-USER user
-ENV HOME=/home/user PATH=/home/user/.local/bin:$PATH
-WORKDIR /app
+# node:22-slim ya incluye el usuario "node" (uid 1000), justo el que usa HF.
+# Creamos la carpeta de la app y se la asignamos ANTES de cambiar de usuario,
+# para que npm ci tenga permiso de escritura.
+RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
+USER node
+ENV HOME=/home/node PATH=/home/node/.local/bin:$PATH
+WORKDIR /home/node/app
 
 # Instalar dependencias primero (capa cacheable).
-COPY --chown=user package.json package-lock.json ./
+COPY --chown=node:node package.json package-lock.json ./
 RUN npm ci
 
 # Generar el cliente de Prisma a partir del esquema.
-COPY --chown=user prisma ./prisma
+COPY --chown=node:node prisma ./prisma
 RUN npx prisma generate
 
 # Código de la aplicación.
-COPY --chown=user src ./src
+COPY --chown=node:node src ./src
 
 ENV NODE_ENV=production
 ENV PORT=7860
