@@ -85,7 +85,7 @@ server/src/
 ### Backend
 | Tecnología | Uso |
 |---|---|
-| **Node.js 24 + Express 5** | API REST |
+| **Node.js 22 + Express 5** | API REST |
 | **PostgreSQL** (Neon) | Persistencia de favoritos e historial |
 | **Prisma 6** | ORM y migraciones |
 | **fetch nativo** | Llamadas a APIs externas (con timeout, reintentos ante rate-limit y manejo central de errores) |
