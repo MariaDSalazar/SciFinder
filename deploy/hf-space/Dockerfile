@@ -3,6 +3,10 @@
 # por eso la app escucha en 7860 (config.port lee process.env.PORT).
 FROM node:22-slim
 
+LABEL org.opencontainers.image.title="SciFinder API" \
+      org.opencontainers.image.source="https://github.com/MariaDSalazar/SciFinder" \
+      org.opencontainers.image.description="Backend de SciFinder (Express) para Hugging Face Spaces"
+
 # Prisma necesita OpenSSL en tiempo de build y de ejecución.
 RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
