@@ -40,7 +40,9 @@ jobs:
       - name: Compilar
         working-directory: client
         env:
-          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+          # URL del backend. Se fija aquí porque la variable de repo
+          # VITE_API_BASE_URL seguía apuntando al backend viejo (ya retirado).
+          VITE_API_BASE_URL: https://MariaSalazar-scifinder-api.hf.space
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
