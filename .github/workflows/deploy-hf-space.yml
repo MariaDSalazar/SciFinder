@@ -42,6 +42,7 @@ jobs:
           fi
 
           HF_USER="${HF_SPACE%%/*}"
+          echo "Desplegando ${GITHUB_SHA::7} al Space ${HF_SPACE} (usuario ${HF_USER})."
 
           # Árbol limpio que verá el Space: solo lo necesario para construir.
           rm -rf build && mkdir -p build
