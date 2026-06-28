@@ -5,7 +5,7 @@
 ### 🌍 Demo en vivo
 **👉 https://mariadsalazar.github.io/SciFinder/**
 
-> ⏳ *Nota: el backend corre en un plan gratuito y "duerme" tras 15 min de inactividad — la primera búsqueda puede tardar ~1 minuto en despertar el servidor. Las siguientes son rápidas.*
+> ⏳ *Nota: el backend corre en un plan gratuito; tras un periodo de inactividad la primera búsqueda puede tardar unos segundos en "despertar" el servidor. Las siguientes son rápidas.*
 
 ![Búsqueda en SciFinder: resultados reales con gráficas interactivas](docs/busqueda.png)
 *Búsqueda con resultados reales: rango de años detectado del tema, enlaces a PDF, favoritos y gráfica de producción por año (clickeable para filtrar).*
@@ -95,7 +95,7 @@ server/src/
 | Pieza | Servicio |
 |---|---|
 | Frontend | **GitHub Pages** (deploy automático con GitHub Actions en cada push) |
-| Backend | **Render** (web service) |
+| Backend | Servicio web gratuito en la nube |
 | Base de datos | **Neon** (PostgreSQL serverless) |
 
 ---
