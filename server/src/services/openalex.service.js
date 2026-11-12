@@ -3,6 +3,9 @@ import { ApiError } from "../lib/ApiError.js";
 import { fetchJson } from "../lib/httpClient.js";
 import { toPaper } from "../mappers/paper.mapper.js";
 
+// Con OPENALEX_API_KEY cada petición usa el cupo propio de la cuenta.
+const auth = config.openAlex.apiKey ? { headers: { Authorization: `Bearer ${config.openAlex.apiKey}` } } : {};
+
 // Campos que le pedimos a OpenAlex con "select". Pedir solo lo necesario reduce
 // el tamaño de la respuesta y acelera la búsqueda.
 const FIELDS = [
@@ -45,7 +48,7 @@ export async function searchPapers({ query, page, perPage, sort, fromYear, toYea
   // La búsqueda y las estadísticas por año van en paralelo (no se suman las
   // esperas). Son secundarias: si fallan, la búsqueda sale igual.
   const [data, yearStats] = await Promise.all([
-    fetchJson(url),
+    fetchJson(url, auth),
     getYearStats(query).catch(() => null),
   ]);
 
@@ -70,7 +73,7 @@ export async function searchPapers({ query, page, perPage, sort, fromYear, toYea
 // insignificante de papers (< 0.01% del total).
 export async function getYearStats(query) {
   const params = new URLSearchParams({ search: query, group_by: "publication_year" });
-  const data = await fetchJson(`${config.openAlex.baseUrl}/works?${params}`);
+  const data = await fetchJson(`${config.openAlex.baseUrl}/works?${params}`, auth);
 
   const groups = (data.group_by ?? [])
     .map((group) => ({ year: Number.parseInt(group.key, 10), count: group.count }))
@@ -99,7 +102,7 @@ export async function getPaperById(openAlexId) {
   const url = `${config.openAlex.baseUrl}/works/${openAlexId}?${params}`;
 
   try {
-    const work = await fetchJson(url);
+    const work = await fetchJson(url, auth);
     return toPaper(work);
   } catch (error) {
     if (error.externalStatus === 404) {

@@ -4,6 +4,8 @@ export const config = {
   port: Number(process.env.PORT) || 3000,
   openAlex: {
     baseUrl: "https://api.openalex.org",
+    // Sin key se comparte el cupo diario de toda la red (se agota); con key hay cupo propio.
+    apiKey: process.env.OPENALEX_API_KEY || null,
   },
   semanticScholar: {
     baseUrl: "https://api.semanticscholar.org",

@@ -21,3 +21,6 @@ export function createApp() {
 
   return app;
 }
+
+// Vercel ejecuta la app como función: toma este export en vez de app.listen().
+export default createApp();
