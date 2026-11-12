@@ -153,7 +153,7 @@ OpenAlex es la base. Las demás APIs **enriquecen** cada paper (resúmenes con I
 - [x] **Fase 8 — Pulido:** ✅ Botón "Cargar más resultados" (paginación acumulativa con filtro de duplicados por id). Spinner animado en estados de carga. Modal se cierra con Esc. Mejoras responsive para móvil (filtros, modal, tipografía). Pie de página con créditos y fuentes. Meta descripción para buscadores.
 - [x] **Fase 9 — Publicación:** ✅ **App en producción.**
   - Frontend: **GitHub Pages** → https://mariadsalazar.github.io/SciFinder/ (deploy automático con GitHub Actions en cada push).
-  - Backend: **Render** (plan free) → https://scifinder-api.onrender.com (nota: se "duerme" tras ~15 min sin uso; la primera visita tarda ~1 min en despertarlo).
+  - Backend: **Vercel** (funciones serverless) → https://scifinder-api.vercel.app (migrado desde Render → Hugging Face Spaces → Vercel; los dos primeros quedaron fuera de servicio).
   - Base de datos: **PostgreSQL en Neon** (misma BD para desarrollo y producción).
   - Repo público (historial auditado sin secretos): https://github.com/MariaDSalazar/SciFinder
   - Pendiente menor: README con capturas para el portafolio.
