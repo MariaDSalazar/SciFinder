@@ -1,33 +1,33 @@
-# 🔬 SciFinder
+# SciFinder
 
 **Buscador de papers científicos en tiempo real**, construido como aplicación full-stack. Busca cualquier tema de investigación y obtén artículos científicos reales con resúmenes generados por IA, métricas de citas, gráficas de tendencias, citas bibliográficas listas para copiar y guardado de favoritos por tema.
 
-### 🌍 Demo en vivo
-**👉 https://mariadsalazar.github.io/SciFinder/**
+### Demo en vivo
+**https://mariadsalazar.github.io/SciFinder/**
 
 ![Búsqueda en SciFinder: resultados reales con gráficas interactivas](docs/busqueda.png)
-*Búsqueda con resultados reales: rango de años detectado del tema, enlaces a PDF, favoritos y gráfica de producción por año (clickeable para filtrar).*
+*Búsqueda con resultados reales: rango de años detectado del tema, enlaces a PDF, favoritos y gráfica de producción por año (clicable para filtrar).*
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
-- 🔎 **Búsqueda multi-motor**: elige entre OpenAlex, Semantic Scholar, Crossref, Europe PMC, ERIC (educación) — o **todos a la vez**, combinados sin duplicados (deduplicación por DOI).
-- 🤖 **Resumen IA (TLDR)** de cada paper, cortesía de Semantic Scholar.
-- 🌐 **Traducción del resumen y abstract** a español o inglés con un click.
-- 📋 **Citas bibliográficas** en **APA 7, MLA 9, Chicago y BibTeX**, con botón de copiar.
-- 📊 **Métricas de calidad**: citas totales, citas influyentes (Semantic Scholar) y citas abiertas + referencias (OpenCitations).
-- 📄 **Rescate de PDFs**: si la fuente principal no tiene el PDF, se consulta CORE para encontrar una copia de acceso abierto — cada PDF indica el repositorio que lo aloja (arXiv, PubMed Central, etc.).
-- 📈 **Gráficas interactivas** (Recharts): producción de papers por año del tema completo (click en una barra = filtrar ese año) y ranking de más citados.
-- ⭐ **Favoritos agrupados por tema de búsqueda**, persistidos en PostgreSQL.
-- 🕘 **Historial de búsquedas recientes** con acceso de un click.
-- 🎚️ **Filtros inteligentes**: rango de años acotado a los años donde realmente existen papers (descartando datos mal fechados), orden por relevancia o citas, y re-búsqueda automática al cambiar cualquier filtro.
-- ⚡ **Caché en el servidor** con TTL: repetir una búsqueda/detalle/traducción responde en ~20 ms sin tocar las APIs externas (cabecera `X-Cache: HIT/MISS`).
-- 📱 Diseño responsive, estados de carga/error/vacío, paginación "cargar más" y cierre de modal con `Esc`.
+- **Búsqueda multi-motor**: elige entre OpenAlex, Semantic Scholar, Crossref, Europe PMC, ERIC (educación) o todos a la vez, combinados sin duplicados por DOI.
+- **Resumen con IA (TLDR)** de cada paper, cortesía de Semantic Scholar.
+- **Traducción del resumen y el abstract** a español o inglés con un clic.
+- **Citas bibliográficas** en APA 7, MLA 9, Chicago y BibTeX, con botón de copiar.
+- **Métricas de calidad**: citas totales, citas influyentes (Semantic Scholar) y citas abiertas y referencias (OpenCitations).
+- **Rescate de PDFs**: si la fuente principal no tiene el PDF, se consulta CORE para encontrar una copia de acceso abierto. Cada PDF indica el repositorio que lo aloja (arXiv, PubMed Central, etc.).
+- **Gráficas interactivas** (Recharts): producción de papers por año del tema completo (clic en una barra para filtrar ese año) y ranking de más citados.
+- **Favoritos agrupados por tema de búsqueda**, persistidos en PostgreSQL.
+- **Historial de búsquedas recientes** con acceso de un clic.
+- **Filtros inteligentes**: rango de años acotado a los años donde realmente existen papers (descartando datos mal fechados), orden por relevancia o citas, y re-búsqueda automática al cambiar cualquier filtro.
+- **Caché en el servidor** con TTL: repetir una búsqueda, un detalle o una traducción responde en unos 20 ms sin tocar las APIs externas (cabecera `X-Cache: HIT/MISS`).
+- Diseño responsive, estados de carga, error y vacío, paginación para cargar más resultados, y cierre de modal con `Esc`.
 
 ---
 
-## 📸 Capturas
+## Capturas
 
 | Pantalla principal | Favoritos por tema |
 |---|---|
@@ -35,40 +35,37 @@
 | Filtros de año, orden y motor, con búsquedas recientes de la sesión. | Los papers guardados se agrupan por el tema con el que se buscaron. |
 
 ![Estado vacío de favoritos con mensaje orientativo](docs/favoritos-vacio.png)
-*Cada vista cuida sus estados vacíos: favoritos sin papers guía al usuario a marcar la estrella ☆.*
+*Cada vista cuida sus estados vacíos: la vista de favoritos sin papers guía al usuario a marcar uno como favorito.*
 
 ---
 
-## 🏗️ Arquitectura
+## Arquitectura
 
-```
-  [ Navegador / React ]
-          │  (consume NUESTRA API)
-          ▼
-  [ Backend Node.js + Express ]  ◀── Prisma ──▶  [ PostgreSQL (Neon) ]
-          │  (orquesta, combina y cachea)
-          ▼
-  OpenAlex · Semantic Scholar · Crossref · Europe PMC · ERIC · OpenCitations · CORE
-```
+El backend actúa como orquestador entre el frontend y las fuentes externas:
 
-El backend actúa como **orquestador**: resuelve CORS, protege las API keys (nunca llegan al navegador), normaliza los datos heterogéneos de 7 fuentes a un contrato único (usando el **DOI como llave común**), tolera fallos parciales (una fuente caída no tumba la búsqueda combinada) y cachea respuestas.
+1. El navegador (React) consume la API propia de SciFinder.
+2. El backend (Node.js + Express) resuelve CORS, orquesta las búsquedas, combina resultados y cachea respuestas.
+3. El backend usa Prisma para leer y escribir favoritos e historial en PostgreSQL (Neon).
+4. El backend consulta OpenAlex, Semantic Scholar, Crossref, Europe PMC, ERIC, OpenCitations y CORE, y combina sus resultados en un contrato único.
 
-### Backend — arquitectura por capas
+El backend protege las API keys (nunca llegan al navegador), normaliza los datos heterogéneos de las siete fuentes usando el DOI como llave común, y tolera fallos parciales: si una fuente falla, la búsqueda combinada sigue funcionando con las demás.
+
+### Backend: arquitectura por capas
 
 ```
 server/src/
-├── config/        # Configuración centralizada (lectura única de variables de entorno)
-├── routes/        # Definición de endpoints
-├── controllers/   # Validación de entrada y armado de respuesta
-├── services/      # Lógica de negocio: un servicio por fuente externa + orquestador
-├── mappers/       # Dato crudo externo → forma limpia interna (contrato estable)
-├── middleware/    # 404 y manejador central de errores
-└── lib/           # Utilidades reutilizables: cliente HTTP, caché TTL, validación, Prisma
+├── config/        Configuración centralizada (lectura única de variables de entorno)
+├── routes/        Definición de endpoints
+├── controllers/   Validación de entrada y armado de respuesta
+├── services/      Lógica de negocio: un servicio por fuente externa más el orquestador
+├── mappers/       Dato crudo externo a forma limpia interna (contrato estable)
+├── middleware/    Manejo de rutas no encontradas y de errores
+└── lib/           Utilidades reutilizables: cliente HTTP, caché TTL, validación, Prisma
 ```
 
 ---
 
-## 🛠️ Stack tecnológico
+## Stack tecnológico
 
 ### Frontend
 | Tecnología | Uso |
@@ -78,7 +75,7 @@ server/src/
 | **JavaScript (JSX)** | Lenguaje |
 | **Recharts** | Gráficas interactivas |
 | **CSS** (variables custom) | Estilos y diseño responsive |
-| Hooks personalizados | `useRequest` (genérico), `usePaperSearch` (paginación + descarte de respuestas obsoletas), `usePaperDetail`, `useFavorites` |
+| Hooks personalizados | `useRequest` (genérico), `usePaperSearch` (paginación y descarte de respuestas obsoletas), `usePaperDetail`, `useFavorites` |
 
 ### Backend
 | Tecnología | Uso |
@@ -92,29 +89,29 @@ server/src/
 ### Infraestructura
 | Pieza | Servicio |
 |---|---|
-| Frontend | **GitHub Pages** (deploy automático con GitHub Actions en cada push) |
-| Backend | **Vercel** (funciones serverless) |
-| Base de datos | **Neon** (PostgreSQL serverless) |
+| Frontend | GitHub Pages (deploy automático con GitHub Actions en cada push) |
+| Backend | Vercel (funciones serverless) |
+| Base de datos | Neon (PostgreSQL serverless) |
 
 ---
 
-## 📡 APIs científicas integradas
+## APIs científicas integradas
 
 | API | Rol en SciFinder | Autenticación |
 |---|---|---|
 | [OpenAlex](https://docs.openalex.org/) | Motor principal: búsqueda, metadatos, estadísticas por año, detalle | No requiere |
-| [Semantic Scholar](https://api.semanticscholar.org/api-docs/) | Motor de búsqueda + TLDR (resumen IA) + citas influyentes | API key gratuita |
+| [Semantic Scholar](https://api.semanticscholar.org/api-docs/) | Motor de búsqueda más TLDR (resumen con IA) y citas influyentes | API key gratuita |
 | [Crossref](https://www.crossref.org/documentation/retrieve-metadata/rest-api/) | Motor de búsqueda (registro oficial de DOIs) | No requiere |
 | [Europe PMC](https://europepmc.org/RestfulWebService) | Motor de búsqueda (biomedicina y ciencias de la vida) | No requiere |
 | [ERIC](https://eric.ed.gov/?api) | Motor de búsqueda (educación) | No requiere |
 | [OpenCitations](https://opencitations.net/) | Citas abiertas y referencias por DOI | No requiere |
 | [CORE](https://core.ac.uk/services/api) | Localización de PDFs de acceso abierto | API key gratuita |
 
-Cada paper indica de qué motor proviene (`vía OpenAlex`, `vía Semantic Scholar`...) y el detalle muestra qué fuentes respondieron — transparencia total de los datos.
+Cada paper indica de qué motor proviene (por ejemplo, `vía OpenAlex` o `vía Semantic Scholar`) y el detalle muestra qué fuentes respondieron, con transparencia total de los datos.
 
 ---
 
-## 🔌 Endpoints de la API propia
+## Endpoints de la API propia
 
 | Método | Ruta | Descripción |
 |---|---|---|
@@ -127,7 +124,7 @@ Cada paper indica de qué motor proviene (`vía OpenAlex`, `vía Semantic Schola
 
 ---
 
-## 🚀 Ejecutar en local
+## Ejecutar en local
 
 Requisitos: Node.js 22+ y una base PostgreSQL (gratis en [Neon](https://neon.tech)).
 
@@ -145,22 +142,22 @@ npm install
 #   - CORE_API_KEY (opcional)
 cp .env.example .env
 npx prisma migrate deploy
-npm run dev          # → http://localhost:3000
+npm run dev          # levanta en http://localhost:3000
 
 # 3. Frontend (en otra terminal)
 cd client
 npm install
-npm run dev          # → http://localhost:5173
+npm run dev          # levanta en http://localhost:5173
 ```
 
 ---
 
-## 👩‍💻 Autora
+## Autora
 
 **Maria del Carmen Salazar Torres**
 
 Proyecto de portafolio full-stack: consumo y orquestación de múltiples APIs públicas, diseño de API REST propia, modelado de datos, caché, tolerancia a fallos, CI/CD y despliegue en producción.
 
-## 📄 Licencia
+## Licencia
 
-Distribuido bajo la **Licencia MIT** — uso libre y gratuito, conservando el aviso de autoría. Ver [LICENSE](LICENSE).
+Distribuida bajo la Licencia MIT: uso libre y gratuito, conservando el aviso de autoría. Ver [LICENSE](LICENSE).
